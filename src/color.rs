@@ -25,14 +25,16 @@
 #[license = "ASL2"];
 #[crate_type = "lib"];
 
+pub use self::alpha::AlphaColor;
 pub use self::channel::{Channel, FloatChannel};
-pub use self::hsv::{HSV, ToHSV, HSVA, ToHSVA};
-pub use self::rgb::{RGB, ToRGB, RGBA, ToRGBA};
-pub use self::srgb::{SRGB, SRGBA};
+pub use self::hsv::{HSV, ToHSV};
+pub use self::rgb::{RGB, ToRGB};
+pub use self::srgb::SRGB;
 pub use self::ycbcr::YCbCr;
 
 use std::num::{One, Zero};
 
+pub mod alpha;
 pub mod channel;
 pub mod hsv;
 pub mod rgb;

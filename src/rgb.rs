@@ -14,11 +14,10 @@
 // limitations under the License.
 
 use std::num;
-use std::cast;
 
 use super::{Color, FloatColor, zero};
 use channel::{Channel, FloatChannel};
-use hsv::{HSV, ToHSV, HSVA, ToHSVA};
+use hsv::{HSV, ToHSV};
 
 #[deriving(Clone, Eq)]
 pub struct RGB<T> { r: T, g: T, b: T }
@@ -119,117 +118,6 @@ impl<T:Clone + Channel> ToHSV for RGB<T> {
         } else {
             HSV::new(zero(), zero(), mx)
         }
-    }
-}
-
-#[deriving(Clone, Eq)]
-pub struct RGBA<T> { r: T, g: T, b: T, a: T }
-
-impl<T:Channel> RGBA<T> {
-    #[inline]
-    pub fn new(r: T, g: T, b: T, a: T) -> RGBA<T> {
-        RGBA { r: r, g: g, b: b, a: a }
-    }
-
-    #[inline]
-    pub fn from_rgb_a(rgb: RGB<T>, a: T) -> RGBA<T> {
-        unsafe { cast::transmute((rgb, a)) }
-    }
-
-    #[inline]
-    pub fn rgb<'a>(&'a self) -> &'a RGB<T> {
-        unsafe { cast::transmute(self) }
-    }
-
-    #[inline]
-    pub fn rgb_mut<'a>(&'a mut self) -> &'a mut RGB<T> {
-        unsafe { cast::transmute(self) }
-    }
-}
-
-impl<T:Channel> Color<T> for RGBA<T> {
-    /// Clamps the components of the color to the range `(lo,hi)`.
-    #[inline]
-    pub fn clamp_s(&self, lo: T, hi: T) -> RGBA<T> {
-        RGBA::new(self.r.clamp(&lo, &hi),
-                  self.g.clamp(&lo, &hi),
-                  self.b.clamp(&lo, &hi),
-                  self.a.clamp(&lo, &hi))
-    }
-
-    /// Clamps the components of the color component-wise between `lo` and `hi`.
-    #[inline]
-    pub fn clamp_c(&self, lo: &RGBA<T>, hi: &RGBA<T>) -> RGBA<T> {
-        RGBA::new(self.r.clamp(&lo.r, &hi.r),
-                  self.g.clamp(&lo.g, &hi.g),
-                  self.b.clamp(&lo.b, &hi.b),
-                  self.a.clamp(&lo.a, &hi.a))
-    }
-
-    /// Inverts the color.
-    #[inline]
-    pub fn inverse(&self) -> RGBA<T> {
-        RGBA::new(self.r.invert_channel(),
-                  self.g.invert_channel(),
-                  self.b.invert_channel(),
-                  self.a.invert_channel())
-    }
-}
-
-impl<T:FloatChannel> FloatColor<T> for RGBA<T> {
-    /// Normalizes the components of the color by clamping them to the range `(0,1)`.
-    #[inline]
-    pub fn normalize(&self) -> RGBA<T> {
-        RGBA::new(self.r.normalize_channel(),
-                  self.g.normalize_channel(),
-                  self.b.normalize_channel(),
-                  self.a.normalize_channel())
-    }
-}
-
-pub trait ToRGBA {
-    pub fn to_rgba<U:Channel>(&self) -> RGBA<U>;
-}
-
-impl ToRGBA for u32 {
-    #[inline]
-    pub fn to_rgba<U:Channel>(&self) -> RGBA<U> {
-        fail!("Not yet implemented")
-    }
-}
-
-impl ToRGBA for u64 {
-    #[inline]
-    pub fn to_rgba<U:Channel>(&self) -> RGBA<U> {
-        fail!("Not yet implemented")
-    }
-}
-
-impl<C: ToRGB, T:Clone + Channel> ToRGBA for (C, T) {
-    #[inline]
-    pub fn to_rgba<U:Channel>(&self) -> RGBA<U> {
-        match *self {
-            (ref rgb, ref a) =>  {
-                RGBA::from_rgb_a(rgb.to_rgb(), a.to_channel())
-            }
-        }
-    }
-}
-
-impl<T:Clone + Channel> ToRGBA for RGBA<T> {
-    #[inline]
-    pub fn to_rgba<U:Channel>(&self) -> RGBA<U> {
-        RGBA::new(self.r.to_channel(),
-                  self.g.to_channel(),
-                  self.b.to_channel(),
-                  self.a.to_channel())
-    }
-}
-
-impl<T:Clone + Channel> ToHSVA for RGBA<T> {
-    #[inline]
-    pub fn to_hsva<U:FloatChannel>(&self) -> HSVA<U> {
-        HSVA::from_hsv_a(self.rgb().to_hsv(), self.a.to_channel())
     }
 }
 
@@ -395,27 +283,5 @@ mod tests {
         assert_eq!(RGB::new::<u8>(0x99, 0x00, 0x00).to_hsv::<f32>(), HSV::new::<f32>(0.0, 1.0, 0.6));
         assert_eq!(RGB::new::<u8>(0x00, 0x99, 0x00).to_hsv::<f32>(), HSV::new::<f32>(120.0, 1.0, 0.6));
         assert_eq!(RGB::new::<u8>(0x00, 0x00, 0x99).to_hsv::<f32>(), HSV::new::<f32>(240.0, 1.0, 0.6));
-    }
-
-    #[test]
-    fn test_tuple_to_rgba() {
-        assert_eq!((RGB::new::<f64>(1.0, 1.0, 1.0), 0xFFu8).to_rgba::<f32>(), RGBA::new::<f32>(1.0, 1.0, 1.0, 1.0));
-        assert_eq!((RGB::new::<f64>(1.0, 1.0, 1.0), 0xFFu8).to_rgba::<f32>(), RGBA::new::<f32>(1.0, 1.0, 1.0, 1.0));
-        assert_eq!((RGB::new::<f64>(1.0, 1.0, 1.0), 0xFFu8).to_rgba::<f32>(), RGBA::new::<f32>(1.0, 1.0, 1.0, 1.0));
-        assert_eq!((RGB::new::<f64>(1.0, 1.0, 1.0), 0xFFu8).to_rgba::<f32>(), RGBA::new::<f32>(1.0, 1.0, 1.0, 1.0));
-    }
-
-    #[test]
-    fn test_rgba_to_rgba() {
-        assert_eq!(RGBA::new::<u8>(0xA0, 0xA0, 0xA0, 0xA0).to_rgba::<u8>(), RGBA::new::<u8>(0xA0, 0xA0, 0xA0, 0xA0));
-        assert_eq!(RGBA::new::<u8>(0xA0, 0xA0, 0xA0, 0xA0).to_rgba::<u16>(), RGBA::new::<u16>(0xA0A0, 0xA0A0, 0xA0A0, 0xA0A0));
-    }
-
-    #[test]
-    fn test_rgba_to_hsva() {
-        assert_eq!(RGBA::new::<u8>(0xFF, 0xFF, 0xFF, 0xFF).to_hsva::<f32>(), HSVA::new::<f32>(0.0, 0.0, 1.0, 1.0));
-        assert_eq!(RGBA::new::<u8>(0x99, 0x00, 0x00, 0xFF).to_hsva::<f32>(), HSVA::new::<f32>(0.0, 1.0, 0.6, 1.0));
-        assert_eq!(RGBA::new::<u8>(0x00, 0x99, 0x00, 0xFF).to_hsva::<f32>(), HSVA::new::<f32>(120.0, 1.0, 0.6, 1.0));
-        assert_eq!(RGBA::new::<u8>(0x00, 0x00, 0x99, 0xFF).to_hsva::<f32>(), HSVA::new::<f32>(240.0, 1.0, 0.6, 1.0));
     }
 }
