@@ -16,10 +16,8 @@
 use super::Color;
 use channel::Channel;
 
-pub struct AlphaColor<T, C> {
-    c: C,
-    a: T
-}
+#[deriving(Clone, Eq)]
+pub struct AlphaColor<T, C> { c: C, a: T }
 
 impl<T:Channel + Clone, C:Color<T>> Color<T> for AlphaColor<T, C> {
     /// Clamps the components of the color to the range `(lo,hi)`.
