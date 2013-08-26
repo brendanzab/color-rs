@@ -31,7 +31,7 @@ impl<T:FloatChannel> HSV<T> {
 impl<T:FloatChannel> Color<T> for HSV<T> {
     /// Clamps the components of the color to the range `(lo,hi)`.
     #[inline]
-    pub fn clamp_s(&self, lo: T, hi: T) -> HSV<T> {
+    fn clamp_s(&self, lo: T, hi: T) -> HSV<T> {
         HSV::new(self.h.clamp(&lo, &hi), // Should the hue component be clamped?
                  self.s.clamp(&lo, &hi),
                  self.v.clamp(&lo, &hi))
@@ -39,7 +39,7 @@ impl<T:FloatChannel> Color<T> for HSV<T> {
 
     /// Clamps the components of the color component-wise between `lo` and `hi`.
     #[inline]
-    pub fn clamp_c(&self, lo: &HSV<T>, hi: &HSV<T>) -> HSV<T> {
+    fn clamp_c(&self, lo: &HSV<T>, hi: &HSV<T>) -> HSV<T> {
         HSV::new(self.h.clamp(&lo.h, &hi.h),
                  self.s.clamp(&lo.s, &hi.s),
                  self.v.clamp(&lo.v, &hi.v))
@@ -47,7 +47,7 @@ impl<T:FloatChannel> Color<T> for HSV<T> {
 
     /// Inverts the color.
     #[inline]
-    pub fn inverse(&self) -> HSV<T> {
+    fn inverse(&self) -> HSV<T> {
         HSV::new(self.h.invert_degrees(),
                  self.s.invert_channel(),
                  self.v.invert_channel())
@@ -58,7 +58,7 @@ impl<T:FloatChannel> FloatColor<T> for HSV<T> {
     /// Normalizes the components of the color. Modulo `360` is applied to the
     /// `h` component, and `s` and `v` are clamped to the range `(0,1)`.
     #[inline]
-    pub fn normalize(&self) -> HSV<T> {
+    fn normalize(&self) -> HSV<T> {
         HSV::new(self.h.normalize_degrees(),
                  self.s.normalize_channel(),
                  self.v.normalize_channel())
@@ -66,26 +66,26 @@ impl<T:FloatChannel> FloatColor<T> for HSV<T> {
 }
 
 pub trait ToHSV {
-    pub fn to_hsv<U:FloatChannel>(&self) -> HSV<U>;
+    fn to_hsv<U:FloatChannel>(&self) -> HSV<U>;
 }
 
 impl ToHSV for u32 {
     #[inline]
-    pub fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
+    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
         fail!("Not yet implemented")
     }
 }
 
 impl ToHSV for u64 {
     #[inline]
-    pub fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
+    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
         fail!("Not yet implemented")
     }
 }
 
 impl<T:Clone + FloatChannel> ToHSV for HSV<T> {
     #[inline]
-    pub fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
+    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
         HSV::new(self.h.to_channel(),
                  self.s.to_channel(),
                  self.v.to_channel())
@@ -93,7 +93,7 @@ impl<T:Clone + FloatChannel> ToHSV for HSV<T> {
 }
 
 impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
-    pub fn to_rgb<U:Channel>(&self) -> RGB<U> {
+    fn to_rgb<U:Channel>(&self) -> RGB<U> {
         // Algorithm taken from the Wikipedia article on HSL and HSV:
         // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 

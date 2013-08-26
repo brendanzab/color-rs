@@ -45,15 +45,15 @@ pub fn zero<T:Zero>() -> T { Zero::zero() }
 pub fn one<T:One>() -> T { One::one() }
 
 pub trait Color<T> {
-    pub fn clamp_s(&self, lo: T, hi: T) -> Self;
-    pub fn clamp_c(&self, lo: &Self, hi: &Self) -> Self;
-    pub fn inverse(&self) -> Self;
-    // pub fn mix(&self, other: &Self, value: T) -> Self;
-    // pub fn saturation(&self, value: T) -> Self;
-    // pub fn exposure(&self, value: T) -> Self;
-    // pub fn brightness(&self, value: T) -> Self;
+    fn clamp_s(&self, lo: T, hi: T) -> Self;
+    fn clamp_c(&self, lo: &Self, hi: &Self) -> Self;
+    fn inverse(&self) -> Self;
+    // fn mix(&self, other: &Self, value: T) -> Self;
+    // fn saturation(&self, value: T) -> Self;
+    // fn exposure(&self, value: T) -> Self;
+    // fn brightness(&self, value: T) -> Self;
 }
 
 pub trait FloatColor<T>: Color<T> {
-    pub fn normalize(&self) -> Self;
+    fn normalize(&self) -> Self;
 }
