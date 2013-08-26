@@ -32,7 +32,7 @@ impl<T:Channel> RGB<T> {
 impl<T:Channel> Color<T> for RGB<T> {
     /// Clamps the components of the color to the range `(lo,hi)`.
     #[inline]
-    pub fn clamp_s(&self, lo: T, hi: T) -> RGB<T> {
+    fn clamp_s(&self, lo: T, hi: T) -> RGB<T> {
         RGB::new(self.r.clamp(&lo, &hi),
                  self.g.clamp(&lo, &hi),
                  self.b.clamp(&lo, &hi))
@@ -40,7 +40,7 @@ impl<T:Channel> Color<T> for RGB<T> {
 
     /// Clamps the components of the color component-wise between `lo` and `hi`.
     #[inline]
-    pub fn clamp_c(&self, lo: &RGB<T>, hi: &RGB<T>) -> RGB<T> {
+    fn clamp_c(&self, lo: &RGB<T>, hi: &RGB<T>) -> RGB<T> {
         RGB::new(self.r.clamp(&lo.r, &hi.r),
                  self.g.clamp(&lo.g, &hi.g),
                  self.b.clamp(&lo.b, &hi.b))
@@ -48,7 +48,7 @@ impl<T:Channel> Color<T> for RGB<T> {
 
     /// Inverts the color.
     #[inline]
-    pub fn inverse(&self) -> RGB<T> {
+    fn inverse(&self) -> RGB<T> {
         RGB::new(self.r.invert_channel(),
                  self.g.invert_channel(),
                  self.b.invert_channel())
@@ -58,7 +58,7 @@ impl<T:Channel> Color<T> for RGB<T> {
 impl<T:FloatChannel> FloatColor<T> for RGB<T> {
     /// Normalizes the components of the color by clamping them to the range `(0,1)`.
     #[inline]
-    pub fn normalize(&self) -> RGB<T> {
+    fn normalize(&self) -> RGB<T> {
         RGB::new(self.r.normalize_channel(),
                  self.g.normalize_channel(),
                  self.b.normalize_channel())
@@ -66,26 +66,26 @@ impl<T:FloatChannel> FloatColor<T> for RGB<T> {
 }
 
 pub trait ToRGB {
-    pub fn to_rgb<U:Channel>(&self) -> RGB<U>;
+    fn to_rgb<U:Channel>(&self) -> RGB<U>;
 }
 
 impl ToRGB for u32 {
     #[inline]
-    pub fn to_rgb<U:Channel>(&self) -> RGB<U> {
+    fn to_rgb<U:Channel>(&self) -> RGB<U> {
         fail!("Not yet implemented")
     }
 }
 
 impl ToRGB for u64 {
     #[inline]
-    pub fn to_rgb<U:Channel>(&self) -> RGB<U> {
+    fn to_rgb<U:Channel>(&self) -> RGB<U> {
         fail!("Not yet implemented")
     }
 }
 
 impl<T:Clone + Channel> ToRGB for RGB<T> {
     #[inline]
-    pub fn to_rgb<U:Channel>(&self) -> RGB<U> {
+    fn to_rgb<U:Channel>(&self) -> RGB<U> {
         RGB::new(self.r.to_channel(),
                  self.g.to_channel(),
                  self.b.to_channel())
@@ -94,7 +94,7 @@ impl<T:Clone + Channel> ToRGB for RGB<T> {
 
 impl<T:Clone + Channel> ToHSV for RGB<T> {
     #[inline]
-    pub fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
+    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
         // Algorithm taken from the Wikipedia article on HSL and HSV:
         // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
@@ -122,7 +122,7 @@ impl<T:Clone + Channel> ToHSV for RGB<T> {
 }
 
 /// SVG 1.0 color constants: http://www.w3.org/TR/SVG/types.html#ColorKeywords
-pub mod consts {
+mod consts {
     use super::RGB;
 
     static ALICEBLUE:               RGB<u8> = RGB { r: 0xF0, g: 0xF8, b: 0xFF };

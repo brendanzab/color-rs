@@ -22,7 +22,7 @@ pub struct AlphaColor<T, C> { c: C, a: T }
 impl<T:Channel + Clone, C:Color<T>> Color<T> for AlphaColor<T, C> {
     /// Clamps the components of the color to the range `(lo,hi)`.
     #[inline]
-    pub fn clamp_s(&self, lo: T, hi: T) -> AlphaColor<T, C> {
+    fn clamp_s(&self, lo: T, hi: T) -> AlphaColor<T, C> {
         AlphaColor {
             c: self.c.clamp_s(lo.clone(), hi.clone()),
             a: self.a.clamp(&lo, &hi),
@@ -31,7 +31,7 @@ impl<T:Channel + Clone, C:Color<T>> Color<T> for AlphaColor<T, C> {
 
     /// Clamps the components of the color component-wise between `lo` and `hi`.
     #[inline]
-    pub fn clamp_c(&self, lo: &AlphaColor<T, C>, hi: &AlphaColor<T, C>) -> AlphaColor<T, C> {
+    fn clamp_c(&self, lo: &AlphaColor<T, C>, hi: &AlphaColor<T, C>) -> AlphaColor<T, C> {
         AlphaColor {
             c: self.c.clamp_c(&lo.c, &hi.c),
             a: self.a.clamp(&lo.a, &hi.a),
@@ -40,7 +40,7 @@ impl<T:Channel + Clone, C:Color<T>> Color<T> for AlphaColor<T, C> {
 
     /// Inverts the color.
     #[inline]
-    pub fn inverse(&self) -> AlphaColor<T, C> {
+    fn inverse(&self) -> AlphaColor<T, C> {
         AlphaColor {
             c: self.c.inverse(),
             a: self.a.invert_channel(),
