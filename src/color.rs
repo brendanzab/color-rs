@@ -15,7 +15,7 @@
 
 
 
-#[link( author = "Brendan Zabarauskas", url = "https://github.com/bjz/color-rs")];
+#[link(name="color", author = "Brendan Zabarauskas", url = "https://github.com/bjz/color-rs")];
 
 #[comment = "A library that provides types and conversions for working with
              various color formats."];
