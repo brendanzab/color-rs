@@ -22,6 +22,10 @@ use hsv::{HSV, ToHSV};
 #[deriving(Clone, Eq)]
 pub struct RGB<T> { r: T, g: T, b: T }
 
+fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
+    num::cast(n).unwrap()
+}
+
 impl<T:Channel> RGB<T> {
     #[inline]
     pub fn new(r: T, g: T, b: T) -> RGB<T> {
@@ -105,11 +109,11 @@ impl<T:Clone + Channel> ToHSV for RGB<T> {
         let chr = mx - mn;
 
         if chr != zero() {
-            let h = cond! (
-                (rgb_u.r == mx)       { ((rgb_u.g - rgb_u.b) / chr) % num::cast(6) }
-                (rgb_u.g == mx)       { ((rgb_u.b - rgb_u.r) / chr) + num::cast(2) }
-                _ /* rgb_u.b == mx */ { ((rgb_u.r - rgb_u.g) / chr) + num::cast(4) }
-            ) * num::cast(60);
+            let h =
+                if      (rgb_u.r == mx)       { ((rgb_u.g - rgb_u.b) / chr) % cast(6) }
+                else if (rgb_u.g == mx)       { ((rgb_u.b - rgb_u.r) / chr) + cast(2) }
+                else      /* rgb_u.b == mx */ { ((rgb_u.r - rgb_u.g) / chr) + cast(4) }
+            * cast(60);
 
             let s = chr / mx;
 

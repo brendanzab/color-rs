@@ -15,7 +15,11 @@
 
 //! Color channel conversions and utility methods
 
-use std::num::cast;
+use std;
+
+fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
+    std::num::cast(n).unwrap()
+}
 
 pub trait Channel: Clone + Primitive + Orderable {
     fn from<T:Channel>(chan: T) -> Self;
@@ -89,8 +93,8 @@ pub trait FloatChannel: Float + Channel {
     }
 }
 
-impl FloatChannel for f32;
-impl FloatChannel for f64;
+impl FloatChannel for f32 {}
+impl FloatChannel for f64 {}
 
 #[cfg(test)]
 mod tests {
