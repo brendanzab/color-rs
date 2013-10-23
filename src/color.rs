@@ -25,6 +25,8 @@
 #[license = "ASL2"];
 #[crate_type = "lib"];
 
+#[feature(globs)];
+
 pub use self::alpha::AlphaColor;
 pub use self::channel::{Channel, FloatChannel};
 pub use self::hsv::{HSV, ToHSV};

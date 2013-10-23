@@ -19,6 +19,10 @@ use super::{Color, FloatColor, one, zero};
 use channel::{Channel, FloatChannel};
 use rgb::{RGB, ToRGB};
 
+fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
+    num::cast(n).unwrap()
+}
+
 #[deriving(Clone, Eq)]
 pub struct HSV<T> { h: T, s: T, v: T }
 
@@ -98,20 +102,19 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
         // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
         let chr = self.v * self.s;
-        let h = self.h / num::cast(60);
+        let h = self.h / cast(60);
 
         // the 2nd largest component
-        let x = chr * (one::<T>() - ((h % num::cast(2)) - one()).abs());
+        let x = chr * (one::<T>() - ((h % cast(2)) - one()).abs());
 
-        let mut rgb = cond! (
-            (h < num::cast(1)) { RGB::new(chr.clone(), x, zero()) }
-            (h < num::cast(2)) { RGB::new(x, chr.clone(), zero()) }
-            (h < num::cast(3)) { RGB::new(zero(), chr.clone(), x) }
-            (h < num::cast(4)) { RGB::new(zero(), x, chr.clone()) }
-            (h < num::cast(5)) { RGB::new(x, zero(), chr.clone()) }
-            (h < num::cast(6)) { RGB::new(chr.clone(), zero(), x) }
-            _                  { RGB::new(zero(), zero(), zero()) }
-        );
+        let mut rgb =
+            if      (h < cast(1)) { RGB::new(chr.clone(), x, zero()) }
+            else if (h < cast(2)) { RGB::new(x, chr.clone(), zero()) }
+            else if (h < cast(3)) { RGB::new(zero(), chr.clone(), x) }
+            else if (h < cast(4)) { RGB::new(zero(), x, chr.clone()) }
+            else if (h < cast(5)) { RGB::new(x, zero(), chr.clone()) }
+            else if (h < cast(6)) { RGB::new(chr.clone(), zero(), x) }
+            else                  { RGB::new(zero(), zero(), zero()) };
 
         // match the value by adding the same amount to each component
         let mn = self.v - chr;
