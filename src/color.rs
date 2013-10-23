@@ -15,10 +15,7 @@
 
 
 
-#[link(name = "lmath",
-       vers = "0.1.0",
-       author = "Brendan Zabarauskas",
-       url = "https://github.com/bjz/color-rs")];
+#[link( author = "Brendan Zabarauskas", url = "https://github.com/bjz/color-rs")];
 
 #[comment = "A library that provides types and conversions for working with
              various color formats."];
