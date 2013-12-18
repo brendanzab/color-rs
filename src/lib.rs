@@ -14,9 +14,7 @@
 // limitations under the License.
 
 
-
-#[link(name="color", author = "Brendan Zabarauskas", url = "https://github.com/bjz/color-rs")];
-
+#[pkgid = "color#0.1"];
 #[comment = "A library that provides types and conversions for working with
              various color formats."];
 #[license = "ASL2"];
