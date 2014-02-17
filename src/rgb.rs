@@ -277,15 +277,15 @@ mod tests {
 
     #[test]
     fn test_rgb_to_rgb() {
-        assert_eq!(RGB::new::<u8>(0xA0, 0xA0, 0xA0).to_rgb::<u8>(), RGB::new::<u8>(0xA0, 0xA0, 0xA0));
-        assert_eq!(RGB::new::<u8>(0xA0, 0xA0, 0xA0).to_rgb::<u16>(), RGB::new::<u16>(0xA0A0, 0xA0A0, 0xA0A0));
+        assert_eq!(RGB::<u8>::new(0xA0, 0xA0, 0xA0).to_rgb::<u8>(), RGB::<u8>::new(0xA0, 0xA0, 0xA0));
+        assert_eq!(RGB::<u8>::new(0xA0, 0xA0, 0xA0).to_rgb::<u16>(), RGB::<u16>::new(0xA0A0, 0xA0A0, 0xA0A0));
     }
 
     #[test]
     fn test_rgb_to_hsv() {
-        assert_eq!(RGB::new::<u8>(0xFF, 0xFF, 0xFF).to_hsv::<f32>(), HSV::new::<f32>(0.0, 0.0, 1.0));
-        assert_eq!(RGB::new::<u8>(0x99, 0x00, 0x00).to_hsv::<f32>(), HSV::new::<f32>(0.0, 1.0, 0.6));
-        assert_eq!(RGB::new::<u8>(0x00, 0x99, 0x00).to_hsv::<f32>(), HSV::new::<f32>(120.0, 1.0, 0.6));
-        assert_eq!(RGB::new::<u8>(0x00, 0x00, 0x99).to_hsv::<f32>(), HSV::new::<f32>(240.0, 1.0, 0.6));
+        assert_eq!(RGB::<u8>::new(0xFF, 0xFF, 0xFF).to_hsv::<f32>(), HSV::<f32>::new(0.0, 0.0, 1.0));
+        assert_eq!(RGB::<u8>::new(0x99, 0x00, 0x00).to_hsv::<f32>(), HSV::<f32>::new(0.0, 1.0, 0.6));
+        assert_eq!(RGB::<u8>::new(0x00, 0x99, 0x00).to_hsv::<f32>(), HSV::<f32>::new(120.0, 1.0, 0.6));
+        assert_eq!(RGB::<u8>::new(0x00, 0x00, 0x99).to_hsv::<f32>(), HSV::<f32>::new(240.0, 1.0, 0.6));
     }
 }

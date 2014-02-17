@@ -114,7 +114,7 @@ impl FloatChannel for f64 {}
 
 #[cfg(test)]
 mod tests {
-    use super::Channel;
+    use super::{Channel, FloatChannel};
 
     #[test]
     fn test_to_channel_u8() {
