@@ -108,12 +108,12 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
         let x = chr * (one::<T>() - ((h % cast(2)) - one()).abs());
 
         let mut rgb =
-            if      (h < cast(1)) { RGB::new(chr.clone(), x, zero()) }
-            else if (h < cast(2)) { RGB::new(x, chr.clone(), zero()) }
-            else if (h < cast(3)) { RGB::new(zero(), chr.clone(), x) }
-            else if (h < cast(4)) { RGB::new(zero(), x, chr.clone()) }
-            else if (h < cast(5)) { RGB::new(x, zero(), chr.clone()) }
-            else if (h < cast(6)) { RGB::new(chr.clone(), zero(), x) }
+            if      h < cast(1) { RGB::new(chr.clone(), x, zero()) }
+            else if h < cast(2) { RGB::new(x, chr.clone(), zero()) }
+            else if h < cast(3) { RGB::new(zero(), chr.clone(), x) }
+            else if h < cast(4) { RGB::new(zero(), x, chr.clone()) }
+            else if h < cast(5) { RGB::new(x, zero(), chr.clone()) }
+            else if h < cast(6) { RGB::new(chr.clone(), zero(), x) }
             else                  { RGB::new(zero(), zero(), zero()) };
 
         // match the value by adding the same amount to each component
@@ -134,17 +134,17 @@ mod tests {
 
     #[test]
     fn test_hsv_to_hsv() {
-        assert_eq!(HSV::new::<f64>(0.0, 0.0, 1.0).to_hsv::<f32>(), HSV::new::<f32>(0.0, 0.0, 1.0));
-        assert_eq!(HSV::new::<f64>(0.0, 1.0, 0.6).to_hsv::<f32>(), HSV::new::<f32>(0.0, 1.0, 0.6));
-        assert_eq!(HSV::new::<f64>(120.0, 1.0, 0.6).to_hsv::<f32>(), HSV::new::<f32>(120.0, 1.0, 0.6));
-        assert_eq!(HSV::new::<f64>(240.0, 1.0, 0.6).to_hsv::<f32>(), HSV::new::<f32>(240.0, 1.0, 0.6));
+        assert_eq!(HSV::<f64>::new(0.0, 0.0, 1.0).to_hsv::<f32>(),   HSV::<f32>::new(0.0, 0.0, 1.0));
+        assert_eq!(HSV::<f64>::new(0.0, 1.0, 0.6).to_hsv::<f32>(),   HSV::<f32>::new(0.0, 1.0, 0.6));
+        assert_eq!(HSV::<f64>::new(120.0, 1.0, 0.6).to_hsv::<f32>(), HSV::<f32>::new(120.0, 1.0, 0.6));
+        assert_eq!(HSV::<f64>::new(240.0, 1.0, 0.6).to_hsv::<f32>(), HSV::<f32>::new(240.0, 1.0, 0.6));
     }
 
     #[test]
     fn test_hsv_to_rgb() {
-        assert_eq!(HSV::new::<f32>(0.0, 0.0, 1.0).to_rgb::<u8>(), RGB::new::<u8>(0xFF, 0xFF, 0xFF));
-        assert_eq!(HSV::new::<f32>(0.0, 1.0, 0.6).to_rgb::<u8>(), RGB::new::<u8>(0x99, 0x00, 0x00));
-        assert_eq!(HSV::new::<f32>(120.0, 1.0, 0.6).to_rgb::<u8>(), RGB::new::<u8>(0x00, 0x99, 0x00));
-        assert_eq!(HSV::new::<f32>(240.0, 1.0, 0.6).to_rgb::<u8>(), RGB::new::<u8>(0x00, 0x00, 0x99));
+        assert_eq!(HSV::<f32>::new(0.0, 0.0, 1.0).to_rgb::<u8>(),   RGB::<u8>::new(0xFF, 0xFF, 0xFF));
+        assert_eq!(HSV::<f32>::new(0.0, 1.0, 0.6).to_rgb::<u8>(),   RGB::<u8>::new(0x99, 0x00, 0x00));
+        assert_eq!(HSV::<f32>::new(120.0, 1.0, 0.6).to_rgb::<u8>(), RGB::<u8>::new(0x00, 0x99, 0x00));
+        assert_eq!(HSV::<f32>::new(240.0, 1.0, 0.6).to_rgb::<u8>(), RGB::<u8>::new(0x00, 0x00, 0x99));
     }
 }

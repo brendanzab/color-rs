@@ -21,7 +21,7 @@ fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
     std::num::cast(n).unwrap()
 }
 
-pub trait Channel: Clone + Primitive + Orderable {
+pub trait Channel: Clone + Primitive {
     fn from<T:Channel>(chan: T) -> Self;
     fn to_channel<T:Channel>(&self) -> T { Channel::from(self.clone()) }
     fn to_channel_u8(&self)  -> u8;
@@ -30,6 +30,22 @@ pub trait Channel: Clone + Primitive + Orderable {
     fn to_channel_f64(&self) -> f64;
 
     fn invert_channel(&self) -> Self;
+
+    fn clamp(&self, lo: &Self, hi: &Self) -> Self {
+        if self < lo {
+            lo.clone()
+        } else if self > hi {
+            hi.clone()
+        } else {
+            self.clone()
+        }
+    }
+    fn max<'a>(&'a self, other: &'a Self) -> Self {
+        std::cmp::max(self, other).clone()
+    }
+    fn min<'a>(&'a self, other: &'a Self) -> Self {
+        std::cmp::min(self, other).clone()
+    }
 }
 
 impl Channel for u8 {
@@ -98,7 +114,7 @@ impl FloatChannel for f64 {}
 
 #[cfg(test)]
 mod tests {
-    use super::Channel;
+    use super::{Channel, FloatChannel};
 
     #[test]
     fn test_to_channel_u8() {
