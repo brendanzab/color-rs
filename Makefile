@@ -1,4 +1,4 @@
-# Copyright 2013 The color-rs developers. For a full listing of the authors,
+# Copyright 2013 The GLFW-RS Developers. For a full listing of the authors,
 # refer to the AUTHORS file at the top-level directory of this distribution.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,30 +13,60 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TARGET = color
+RUSTC               = rustc
+RUSTDOC             = rustdoc
 
-ROOT_DIR = .
+SRC_DIR             = src
+LIB_FILE            = $(SRC_DIR)/lib.rs
 
-SRC_DIR        = $(ROOT_DIR)/src
-SRC_CRATE      = $(TARGET).rs
-BUILD_DIR      = $(ROOT_DIR)/lib
+CRATE_NAME          = $(shell $(RUSTC) --crate-name $(LIB_FILE))
+CRATE_FILES         = $(shell $(RUSTC) --crate-file-name $(LIB_FILE))
 
-TEST           = $(TARGET)
-TEST_BUILD_DIR = $(ROOT_DIR)/test
+DOC_DIR             = doc
+LIB_DIR             = lib
 
-.PHONY: test
+INSTALL_PREFIX      = /usr/local
+BIN_INSTALL_DIR     = $(INSTALL_PREFIX)/bin
+LIB_INSTALL_DIR     = $(INSTALL_PREFIX)/lib
 
-$(TARGET):
-	@mkdir -p $(BUILD_DIR)
-	@rustc $(SRC_DIR)/$(SRC_CRATE) --out-dir=$(BUILD_DIR)
+all: lib examples doc
 
-all: $(TARGET)
+lib:
+	mkdir -p $(LIB_DIR)
+	$(RUSTC) --out-dir=$(LIB_DIR) -C link-args="$(LINK_ARGS)" -O $(LIB_FILE)
 
-test:
-	@mkdir -p $(TEST_BUILD_DIR)
-	@rustc $(SRC_DIR)/$(SRC_CRATE) --test --out-dir=$(TEST_BUILD_DIR)
-	@$(TEST_BUILD_DIR)/$(TARGET)
+doc:
+	mkdir -p $(DOC_DIR)
+	$(RUSTDOC) -o $(DOC_DIR) $(LIB_FILE)
+
+install: lib
+	@ $(foreach crate, $(CRATE_FILES), \
+		cp $(LIB_DIR)/$(crate) $(LIB_INSTALL_DIR)/$(crate) && \
+		echo "Installed $(crate) to $(LIB_INSTALL_DIR)" ; \
+	)
+
+test: lib
+	$(RUSTC) --test --out-dir=$(LIB_DIR) -O $(LIB_FILE)
+	$(LIB_DIR)/color
+
+uninstall:
+	@-rm -f $(LIB_INSTALL_DIR)/lib$(CRATE_NAME)-*.rlib ||:
+	@-rm -f $(LIB_INSTALL_DIR)/lib$(CRATE_NAME)-*.so ||:
+	@-rm -f $(LIB_INSTALL_DIR)/lib$(CRATE_NAME)-*.dylib ||:
 
 clean:
-	rm -R -f $(BUILD_DIR)
-	rm -R -f $(TEST_BUILD_DIR)
+	rm -rf $(LIB_DIR)
+	rm -rf $(EXAMPLES_DIR)
+	rm -rf $(DOC_DIR)
+
+.PHONY: \
+	all \
+	lib \
+	doc \
+	examples \
+	examples-dir \
+	$(EXAMPLE_FILES) \
+	install \
+	uninstall \
+	clean \
+	test

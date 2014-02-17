@@ -108,12 +108,12 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
         let x = chr * (one::<T>() - ((h % cast(2)) - one()).abs());
 
         let mut rgb =
-            if      (h < cast(1)) { RGB::new(chr.clone(), x, zero()) }
-            else if (h < cast(2)) { RGB::new(x, chr.clone(), zero()) }
-            else if (h < cast(3)) { RGB::new(zero(), chr.clone(), x) }
-            else if (h < cast(4)) { RGB::new(zero(), x, chr.clone()) }
-            else if (h < cast(5)) { RGB::new(x, zero(), chr.clone()) }
-            else if (h < cast(6)) { RGB::new(chr.clone(), zero(), x) }
+            if      h < cast(1) { RGB::new(chr.clone(), x, zero()) }
+            else if h < cast(2) { RGB::new(x, chr.clone(), zero()) }
+            else if h < cast(3) { RGB::new(zero(), chr.clone(), x) }
+            else if h < cast(4) { RGB::new(zero(), x, chr.clone()) }
+            else if h < cast(5) { RGB::new(x, zero(), chr.clone()) }
+            else if h < cast(6) { RGB::new(chr.clone(), zero(), x) }
             else                  { RGB::new(zero(), zero(), zero()) };
 
         // match the value by adding the same amount to each component

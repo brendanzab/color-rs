@@ -110,8 +110,8 @@ impl<T:Clone + Channel> ToHSV for RGB<T> {
 
         if chr != zero() {
             let h =
-                if      (rgb_u.r == mx)       { ((rgb_u.g - rgb_u.b) / chr) % cast(6) }
-                else if (rgb_u.g == mx)       { ((rgb_u.b - rgb_u.r) / chr) + cast(2) }
+                if      rgb_u.r == mx       { ((rgb_u.g - rgb_u.b) / chr) % cast(6) }
+                else if rgb_u.g == mx       { ((rgb_u.b - rgb_u.r) / chr) + cast(2) }
                 else      /* rgb_u.b == mx */ { ((rgb_u.r - rgb_u.g) / chr) + cast(4) }
             * cast(60);
 

@@ -14,11 +14,12 @@
 // limitations under the License.
 
 
-#[pkgid = "color#0.1"];
+#[crate_id = "color#0.1"];
 #[comment = "A library that provides types and conversions for working with
              various color formats."];
 #[license = "ASL2"];
-#[crate_type = "lib"];
+#[crate_type = "rlib"];
+#[crate_type = "dylib"];
 
 #[feature(globs)];
 
