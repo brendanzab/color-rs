@@ -23,7 +23,7 @@ fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     num::cast(n).unwrap()
 }
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, Show)]
 pub struct HSV<T> { h: T, s: T, v: T }
 
 impl<T:FloatChannel> HSV<T> {

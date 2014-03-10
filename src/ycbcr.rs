@@ -15,7 +15,7 @@
 
 // http://en.wikipedia.org/wiki/YCbCr
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, Show)]
 pub struct YCbCr<T> { y: T, cb: T, cr: T }
 
 impl<T> YCbCr<T> {

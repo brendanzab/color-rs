@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[deriving(Clone, Eq)]
+#[deriving(Clone, Eq, Show)]
 pub struct SRGB<T> { r: T, g: T, b: T }
 
 impl<T> SRGB<T> {
