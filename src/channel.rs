@@ -41,10 +41,10 @@ pub trait Channel: Clone + Primitive {
         }
     }
     fn max<'a>(&'a self, other: &'a Self) -> Self {
-        std::cmp::max(self, other).clone()
+        self.max(other)
     }
     fn min<'a>(&'a self, other: &'a Self) -> Self {
-        std::cmp::min(self, other).clone()
+        self.min(other)
     }
 }
 
