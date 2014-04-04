@@ -14,14 +14,14 @@
 // limitations under the License.
 
 
-#[crate_id = "color#0.1"];
-#[comment = "A library that provides types and conversions for working with
-             various color formats."];
-#[license = "ASL2"];
-#[crate_type = "rlib"];
-#[crate_type = "dylib"];
+#![crate_id = "color#0.1"]
+#![comment = "A library that provides types and conversions for working with
+             various color formats."]
+#![license = "ASL2"]
+#![crate_type = "rlib"]
+#![crate_type = "dylib"]
 
-#[feature(globs)];
+#![feature(globs)]
 
 pub use self::alpha::AlphaColor;
 pub use self::channel::{Channel, FloatChannel};
