@@ -20,7 +20,7 @@ use channel::{Channel, FloatChannel};
 use hsv::{HSV, ToHSV};
 
 #[deriving(Clone, Eq, Show)]
-pub struct RGB<T> { r: T, g: T, b: T }
+pub struct RGB<T> { pub r: T, pub g: T, pub b: T }
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     num::cast(n).unwrap()

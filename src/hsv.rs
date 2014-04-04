@@ -24,7 +24,7 @@ fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
 }
 
 #[deriving(Clone, Eq, Show)]
-pub struct HSV<T> { h: T, s: T, v: T }
+pub struct HSV<T> { pub h: T, pub s: T, pub v: T }
 
 impl<T:FloatChannel> HSV<T> {
     pub fn new(h: T, s: T, v: T) -> HSV<T> {

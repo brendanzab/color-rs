@@ -14,7 +14,7 @@
 // limitations under the License.
 
 #[deriving(Clone, Eq, Show)]
-pub struct SRGB<T> { r: T, g: T, b: T }
+pub struct SRGB<T> { pub r: T, pub g: T, pub b: T }
 
 impl<T> SRGB<T> {
     #[inline]
