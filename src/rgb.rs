@@ -104,8 +104,8 @@ impl<T:Clone + Channel> ToHSV for RGB<T> {
 
         let rgb_u = self.to_rgb::<U>();
 
-        let mx = rgb_u.r.max(rgb_u.g).max(rgb_u.b);
-        let mn = rgb_u.r.min(rgb_u.g).min(rgb_u.b);
+        let mx = rgb_u.r.max(&rgb_u.g).max(&rgb_u.b);
+        let mn = rgb_u.r.min(&rgb_u.g).min(&rgb_u.b);
         let chr = mx - mn;
 
         if chr != zero() {
