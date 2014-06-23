@@ -42,10 +42,10 @@ pub mod ycbcr;
 pub fn zero<T:Zero>() -> T { Zero::zero() }
 pub fn one<T:One>() -> T { One::one() }
 
-pub trait Color<T> {
-    fn clamp_s(&self, lo: T, hi: T) -> Self;
-    fn clamp_c(&self, lo: &Self, hi: &Self) -> Self;
-    fn inverse(&self) -> Self;
+pub trait Color<T>: Copy {
+    fn clamp_s(self, lo: T, hi: T) -> Self;
+    fn clamp_c(self, lo: Self, hi: Self) -> Self;
+    fn inverse(self) -> Self;
     // fn mix(&self, other: &Self, value: T) -> Self;
     // fn saturation(&self, value: T) -> Self;
     // fn exposure(&self, value: T) -> Self;
@@ -53,5 +53,5 @@ pub trait Color<T> {
 }
 
 pub trait FloatColor<T>: Color<T> {
-    fn normalize(&self) -> Self;
+    fn normalize(self) -> Self;
 }

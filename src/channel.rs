@@ -21,91 +21,91 @@ fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
     std::num::cast(n).unwrap()
 }
 
-pub trait Channel: Clone + Primitive {
+pub trait Channel: Copy + Primitive {
     fn from<T:Channel>(chan: T) -> Self;
-    fn to_channel<T:Channel>(&self) -> T { Channel::from(self.clone()) }
-    fn to_channel_u8(&self)  -> u8;
-    fn to_channel_u16(&self) -> u16;
-    fn to_channel_f32(&self) -> f32;
-    fn to_channel_f64(&self) -> f64;
+    fn to_channel<T:Channel>(self) -> T { Channel::from(self) }
+    fn to_channel_u8(self)  -> u8;
+    fn to_channel_u16(self) -> u16;
+    fn to_channel_f32(self) -> f32;
+    fn to_channel_f64(self) -> f64;
 
-    fn invert_channel(&self) -> Self;
+    fn invert_channel(self) -> Self;
 
-    fn clamp(&self, lo: &Self, hi: &Self) -> Self {
+    fn clamp(self, lo: Self, hi: Self) -> Self {
         if self < lo {
-            lo.clone()
+            lo
         } else if self > hi {
-            hi.clone()
+            hi
         } else {
-            self.clone()
+            self
         }
     }
-    fn max<'a>(&'a self, other: &'a Self) -> Self {
+    fn max(self, other: Self) -> Self {
         self.max(other)
     }
-    fn min<'a>(&'a self, other: &'a Self) -> Self {
+    fn min(self, other: Self) -> Self {
         self.min(other)
     }
 }
 
 impl Channel for u8 {
     #[inline] fn from<T:Channel>(chan: T) -> u8 { chan.to_channel_u8() }
-    #[inline] fn to_channel_u8(&self)  -> u8  { (*self) }
-    #[inline] fn to_channel_u16(&self) -> u16 { (*self as u16 << 8) | (*self) as u16 }
-    #[inline] fn to_channel_f32(&self) -> f32 { (*self as f32) / (0xFF as f32) }
-    #[inline] fn to_channel_f64(&self) -> f64 { (*self as f64) / (0xFF as f64) }
+    #[inline] fn to_channel_u8(self)  -> u8  { self }
+    #[inline] fn to_channel_u16(self) -> u16 { (self as u16 << 8) | self as u16 }
+    #[inline] fn to_channel_f32(self) -> f32 { (self as f32) / (0xFF as f32) }
+    #[inline] fn to_channel_f64(self) -> f64 { (self as f64) / (0xFF as f64) }
 
-    #[inline] fn invert_channel(&self) -> u8 { !(*self) }
+    #[inline] fn invert_channel(self) -> u8 { !self }
 }
 
 impl Channel for u16 {
     #[inline] fn from<T:Channel>(chan: T) -> u16 { chan.to_channel_u16() }
-    #[inline] fn to_channel_u8(&self)  -> u8  { (*self >> 8) as u8 }
-    #[inline] fn to_channel_u16(&self) -> u16 { (*self) }
-    #[inline] fn to_channel_f32(&self) -> f32 { ((*self) / 0xFFFF) as f32 }
-    #[inline] fn to_channel_f64(&self) -> f64 { ((*self) / 0xFFFF) as f64 }
+    #[inline] fn to_channel_u8(self)  -> u8  { (self >> 8) as u8 }
+    #[inline] fn to_channel_u16(self) -> u16 { self }
+    #[inline] fn to_channel_f32(self) -> f32 { (self / 0xFFFF) as f32 }
+    #[inline] fn to_channel_f64(self) -> f64 { (self / 0xFFFF) as f64 }
 
-    #[inline] fn invert_channel(&self) -> u16 { !(*self) }
+    #[inline] fn invert_channel(self) -> u16 { !self }
 }
 
 impl Channel for f32 {
     #[inline] fn from<T:Channel>(chan: T) -> f32 { chan.to_channel_f32() }
-    #[inline] fn to_channel_u8(&self)  -> u8  { ((*self) * (0xFF as f32)) as u8 }
-    #[inline] fn to_channel_u16(&self) -> u16 { ((*self) * (0xFFFF as f32)) as u16 }
-    #[inline] fn to_channel_f32(&self) -> f32 { (*self) }
-    #[inline] fn to_channel_f64(&self) -> f64 { (*self) as f64 }
+    #[inline] fn to_channel_u8(self)  -> u8  { (self * (0xFF as f32)) as u8 }
+    #[inline] fn to_channel_u16(self) -> u16 { (self * (0xFFFF as f32)) as u16 }
+    #[inline] fn to_channel_f32(self) -> f32 { self }
+    #[inline] fn to_channel_f64(self) -> f64 { self as f64 }
 
-    #[inline] fn invert_channel(&self) -> f32 { 1.0 - (*self) }
+    #[inline] fn invert_channel(self) -> f32 { 1.0 - self }
 }
 
 impl Channel for f64 {
     #[inline] fn from<T:Channel>(chan: T) -> f64 { chan.to_channel_f64() }
-    #[inline] fn to_channel_u8(&self)  -> u8  { ((*self) * (0xFF as f64)) as u8 }
-    #[inline] fn to_channel_u16(&self) -> u16 { ((*self) * (0xFFFF as f64)) as u16 }
-    #[inline] fn to_channel_f32(&self) -> f32 { (*self) as f32 }
-    #[inline] fn to_channel_f64(&self) -> f64 { (*self) }
+    #[inline] fn to_channel_u8(self)  -> u8  { (self * (0xFF as f64)) as u8 }
+    #[inline] fn to_channel_u16(self) -> u16 { (self * (0xFFFF as f64)) as u16 }
+    #[inline] fn to_channel_f32(self) -> f32 { self as f32 }
+    #[inline] fn to_channel_f64(self) -> f64 { self }
 
-    #[inline] fn invert_channel(&self) -> f64 { 1.0 - (*self) }
+    #[inline] fn invert_channel(self) -> f64 { 1.0 - self }
 }
 
 pub trait FloatChannel: Float + Channel {
     #[inline]
-    fn normalize_channel(&self) -> Self {
-        self.clamp(&cast(0.0), &cast(1.0))
+    fn normalize_channel(self) -> Self {
+        self.clamp(cast(0.0), cast(1.0))
     }
 
     #[inline]
-    fn normalize_degrees(&self) -> Self {
-        if (*self) < cast(0.0) {
-            (*self + cast(360.0)) % cast(360.0)
+    fn normalize_degrees(self) -> Self {
+        if (self) < cast(0.0) {
+            (self + cast(360.0)) % cast(360.0)
         } else {
-            *self % cast(360.0)
+            self % cast(360.0)
         }
     }
 
     #[inline]
-    fn invert_degrees(&self) -> Self {
-        (*self + cast(180.0)).normalize_degrees()
+    fn invert_degrees(self) -> Self {
+        (self + cast(180.0)).normalize_degrees()
     }
 }
 
