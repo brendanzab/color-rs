@@ -16,7 +16,7 @@
 use super::Color;
 use channel::Channel;
 
-#[deriving(Clone, Eq, Show)]
+#[deriving(Clone, PartialEq, Eq, Show)]
 pub struct AlphaColor<T, C> { pub c: C, pub a: T }
 
 impl<T:Channel + Clone, C:Color<T>> Color<T> for AlphaColor<T, C> {
