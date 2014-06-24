@@ -1,4 +1,4 @@
-[project]
+[package]
 
 name = "color-rs"
 version = "0.0.1"
