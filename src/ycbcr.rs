@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// http://en.wikipedia.org/wiki/YCbCr
+//! http://en.wikipedia.org/wiki/YCbCr
 
-#[deriving(Clone, Eq, Show)]
+#[deriving(Clone, PartialEq, Eq, Show)]
 pub struct YCbCr<T> { pub y: T, pub cb: T, pub cr: T }
 
 impl<T> YCbCr<T> {

@@ -23,10 +23,10 @@ fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     num::cast(n).unwrap()
 }
 
-#[deriving(Clone, Eq, Show)]
+#[deriving(Clone, PartialEq, Eq, Show)]
 pub struct HSV<T> { pub h: T, pub s: T, pub v: T }
 
-impl<T:FloatChannel> HSV<T> {
+impl<T: FloatChannel> HSV<T> {
     pub fn new(h: T, s: T, v: T) -> HSV<T> {
         HSV { h: h, s: s, v: v }
     }
@@ -35,23 +35,23 @@ impl<T:FloatChannel> HSV<T> {
 impl<T:FloatChannel> Color<T> for HSV<T> {
     /// Clamps the components of the color to the range `(lo,hi)`.
     #[inline]
-    fn clamp_s(&self, lo: T, hi: T) -> HSV<T> {
-        HSV::new(self.h.clamp(&lo, &hi), // Should the hue component be clamped?
-                 self.s.clamp(&lo, &hi),
-                 self.v.clamp(&lo, &hi))
+    fn clamp_s(self, lo: T, hi: T) -> HSV<T> {
+        HSV::new(self.h.clamp(lo, hi), // Should the hue component be clamped?
+                 self.s.clamp(lo, hi),
+                 self.v.clamp(lo, hi))
     }
 
     /// Clamps the components of the color component-wise between `lo` and `hi`.
     #[inline]
-    fn clamp_c(&self, lo: &HSV<T>, hi: &HSV<T>) -> HSV<T> {
-        HSV::new(self.h.clamp(&lo.h, &hi.h),
-                 self.s.clamp(&lo.s, &hi.s),
-                 self.v.clamp(&lo.v, &hi.v))
+    fn clamp_c(self, lo: HSV<T>, hi: HSV<T>) -> HSV<T> {
+        HSV::new(self.h.clamp(lo.h, hi.h),
+                 self.s.clamp(lo.s, hi.s),
+                 self.v.clamp(lo.v, hi.v))
     }
 
     /// Inverts the color.
     #[inline]
-    fn inverse(&self) -> HSV<T> {
+    fn inverse(self) -> HSV<T> {
         HSV::new(self.h.invert_degrees(),
                  self.s.invert_channel(),
                  self.v.invert_channel())
@@ -62,7 +62,7 @@ impl<T:FloatChannel> FloatColor<T> for HSV<T> {
     /// Normalizes the components of the color. Modulo `360` is applied to the
     /// `h` component, and `s` and `v` are clamped to the range `(0,1)`.
     #[inline]
-    fn normalize(&self) -> HSV<T> {
+    fn normalize(self) -> HSV<T> {
         HSV::new(self.h.normalize_degrees(),
                  self.s.normalize_channel(),
                  self.v.normalize_channel())

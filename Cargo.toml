@@ -1,0 +1,9 @@
+[package]
+
+name = "color-rs"
+version = "0.0.1"
+authors = ["Brendan Zabarauskas <bjzaba@yahoo.com.au>", "Luqman Aden"]
+
+[[lib]]
+
+name = "color"

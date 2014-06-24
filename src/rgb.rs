@@ -19,7 +19,7 @@ use super::{Color, FloatColor, zero};
 use channel::{Channel, FloatChannel};
 use hsv::{HSV, ToHSV};
 
-#[deriving(Clone, Eq, Show)]
+#[deriving(Clone, PartialEq, Eq, Show)]
 pub struct RGB<T> { pub r: T, pub g: T, pub b: T }
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
@@ -36,23 +36,23 @@ impl<T:Channel> RGB<T> {
 impl<T:Channel> Color<T> for RGB<T> {
     /// Clamps the components of the color to the range `(lo,hi)`.
     #[inline]
-    fn clamp_s(&self, lo: T, hi: T) -> RGB<T> {
-        RGB::new(self.r.clamp(&lo, &hi),
-                 self.g.clamp(&lo, &hi),
-                 self.b.clamp(&lo, &hi))
+    fn clamp_s(self, lo: T, hi: T) -> RGB<T> {
+        RGB::new(self.r.clamp(lo, hi),
+                 self.g.clamp(lo, hi),
+                 self.b.clamp(lo, hi))
     }
 
     /// Clamps the components of the color component-wise between `lo` and `hi`.
     #[inline]
-    fn clamp_c(&self, lo: &RGB<T>, hi: &RGB<T>) -> RGB<T> {
-        RGB::new(self.r.clamp(&lo.r, &hi.r),
-                 self.g.clamp(&lo.g, &hi.g),
-                 self.b.clamp(&lo.b, &hi.b))
+    fn clamp_c(self, lo: RGB<T>, hi: RGB<T>) -> RGB<T> {
+        RGB::new(self.r.clamp(lo.r, hi.r),
+                 self.g.clamp(lo.g, hi.g),
+                 self.b.clamp(lo.b, hi.b))
     }
 
     /// Inverts the color.
     #[inline]
-    fn inverse(&self) -> RGB<T> {
+    fn inverse(self) -> RGB<T> {
         RGB::new(self.r.invert_channel(),
                  self.g.invert_channel(),
                  self.b.invert_channel())
@@ -62,7 +62,7 @@ impl<T:Channel> Color<T> for RGB<T> {
 impl<T:FloatChannel> FloatColor<T> for RGB<T> {
     /// Normalizes the components of the color by clamping them to the range `(0,1)`.
     #[inline]
-    fn normalize(&self) -> RGB<T> {
+    fn normalize(self) -> RGB<T> {
         RGB::new(self.r.normalize_channel(),
                  self.g.normalize_channel(),
                  self.b.normalize_channel())

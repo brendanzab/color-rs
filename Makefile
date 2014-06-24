@@ -17,13 +17,13 @@ RUSTC               = rustc
 RUSTDOC             = rustdoc
 
 SRC_DIR             = src
-LIB_FILE            = $(SRC_DIR)/lib.rs
+LIB_FILE            = $(SRC_DIR)/color.rs
 
 CRATE_NAME          = $(shell $(RUSTC) --crate-name $(LIB_FILE))
 CRATE_FILES         = $(shell $(RUSTC) --crate-file-name $(LIB_FILE))
 
 DOC_DIR             = doc
-LIB_DIR             = lib
+LIB_DIR             = target
 
 INSTALL_PREFIX      = /usr/local
 BIN_INSTALL_DIR     = $(INSTALL_PREFIX)/bin
