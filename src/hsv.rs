@@ -102,18 +102,18 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
         // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
 
         let chr = self.v * self.s;
-        let h = self.h / cast(60);
+        let h = self.h / cast(60u8);
 
         // the 2nd largest component
-        let x = chr * (one::<T>() - ((h % cast(2)) - one()).abs());
+        let x = chr * (one::<T>() - ((h % cast(2u8)) - one()).abs());
 
         let mut rgb =
-            if      h < cast(1) { RGB::new(chr.clone(), x, zero()) }
-            else if h < cast(2) { RGB::new(x, chr.clone(), zero()) }
-            else if h < cast(3) { RGB::new(zero(), chr.clone(), x) }
-            else if h < cast(4) { RGB::new(zero(), x, chr.clone()) }
-            else if h < cast(5) { RGB::new(x, zero(), chr.clone()) }
-            else if h < cast(6) { RGB::new(chr.clone(), zero(), x) }
+            if      h < cast(1u8) { RGB::new(chr.clone(), x, zero()) }
+            else if h < cast(2u8) { RGB::new(x, chr.clone(), zero()) }
+            else if h < cast(3u8) { RGB::new(zero(), chr.clone(), x) }
+            else if h < cast(4u8) { RGB::new(zero(), x, chr.clone()) }
+            else if h < cast(5u8) { RGB::new(x, zero(), chr.clone()) }
+            else if h < cast(6u8) { RGB::new(chr.clone(), zero(), x) }
             else                  { RGB::new(zero(), zero(), zero()) };
 
         // match the value by adding the same amount to each component
