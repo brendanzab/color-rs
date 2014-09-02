@@ -15,7 +15,7 @@
 
 use std::num;
 
-use super::{Color, FloatColor, zero};
+use super::{Color, FloatColor, Color3, zero};
 use channel::{Channel, FloatChannel};
 use hsv::{HSV, ToHSV};
 
@@ -66,6 +66,14 @@ impl<T:FloatChannel> FloatColor<T> for RGB<T> {
         RGB::new(self.r.normalize_channel(),
                  self.g.normalize_channel(),
                  self.b.normalize_channel())
+    }
+}
+
+impl<T: Channel> Color3<T> for RGB<T> {
+    fn into_fixed(self) -> [T, ..3] {
+        match self {
+            RGB { r, g, b } => [r, g, b],
+        }
     }
 }
 

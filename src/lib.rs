@@ -51,3 +51,15 @@ pub trait Color<T>: Copy {
     // fn exposure(&self, value: T) -> Self;
     // fn brightness(&self, value: T) -> Self;
 }
+
+pub trait FloatColor<T>: Color<T> {
+    fn normalize(self) -> Self;
+}
+
+pub trait Color3<T>: Color<T> {
+    fn into_fixed(self) -> [T, ..3];
+}
+
+pub trait Color4<T>: Color<T> {
+    fn into_fixed(self) -> [T, ..4];
+}
