@@ -17,97 +17,97 @@ use std::num;
 
 use super::{Color, FloatColor, Color3, one, zero};
 use channel::{Channel, FloatChannel};
-use rgb::{RGB, ToRGB};
+use rgb::{Rgb, ToRgb};
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     num::cast(n).unwrap()
 }
 
 #[deriving(Clone, PartialEq, Eq, Show)]
-pub struct HSV<T> { pub h: T, pub s: T, pub v: T }
+pub struct Hsv<T> { pub h: T, pub s: T, pub v: T }
 
-impl<T: FloatChannel> HSV<T> {
-    pub fn new(h: T, s: T, v: T) -> HSV<T> {
-        HSV { h: h, s: s, v: v }
+impl<T: FloatChannel> Hsv<T> {
+    pub fn new(h: T, s: T, v: T) -> Hsv<T> {
+        Hsv { h: h, s: s, v: v }
     }
 }
 
-impl<T:FloatChannel> Color<T> for HSV<T> {
+impl<T:FloatChannel> Color<T> for Hsv<T> {
     /// Clamps the components of the color to the range `(lo,hi)`.
     #[inline]
-    fn clamp_s(self, lo: T, hi: T) -> HSV<T> {
-        HSV::new(self.h.clamp(lo, hi), // Should the hue component be clamped?
+    fn clamp_s(self, lo: T, hi: T) -> Hsv<T> {
+        Hsv::new(self.h.clamp(lo, hi), // Should the hue component be clamped?
                  self.s.clamp(lo, hi),
                  self.v.clamp(lo, hi))
     }
 
     /// Clamps the components of the color component-wise between `lo` and `hi`.
     #[inline]
-    fn clamp_c(self, lo: HSV<T>, hi: HSV<T>) -> HSV<T> {
-        HSV::new(self.h.clamp(lo.h, hi.h),
+    fn clamp_c(self, lo: Hsv<T>, hi: Hsv<T>) -> Hsv<T> {
+        Hsv::new(self.h.clamp(lo.h, hi.h),
                  self.s.clamp(lo.s, hi.s),
                  self.v.clamp(lo.v, hi.v))
     }
 
     /// Inverts the color.
     #[inline]
-    fn inverse(self) -> HSV<T> {
-        HSV::new(self.h.invert_degrees(),
+    fn inverse(self) -> Hsv<T> {
+        Hsv::new(self.h.invert_degrees(),
                  self.s.invert_channel(),
                  self.v.invert_channel())
     }
 }
 
-impl<T:FloatChannel> FloatColor<T> for HSV<T> {
+impl<T:FloatChannel> FloatColor<T> for Hsv<T> {
     /// Normalizes the components of the color. Modulo `360` is applied to the
     /// `h` component, and `s` and `v` are clamped to the range `(0,1)`.
     #[inline]
-    fn normalize(self) -> HSV<T> {
-        HSV::new(self.h.normalize_degrees(),
+    fn normalize(self) -> Hsv<T> {
+        Hsv::new(self.h.normalize_degrees(),
                  self.s.normalize_channel(),
                  self.v.normalize_channel())
     }
 }
 
-impl<T: FloatChannel> Color3<T> for HSV<T> {
+impl<T: FloatChannel> Color3<T> for Hsv<T> {
     fn into_fixed(self) -> [T, ..3] {
         match self {
-            HSV { h, s, v } => [h, s, v],
+            Hsv { h, s, v } => [h, s, v],
         }
     }
 }
 
-pub trait ToHSV {
-    fn to_hsv<U:FloatChannel>(&self) -> HSV<U>;
+pub trait ToHsv {
+    fn to_hsv<U:FloatChannel>(&self) -> Hsv<U>;
 }
 
-impl ToHSV for u32 {
+impl ToHsv for u32 {
     #[inline]
-    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
+    fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
         fail!("Not yet implemented")
     }
 }
 
-impl ToHSV for u64 {
+impl ToHsv for u64 {
     #[inline]
-    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
+    fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
         fail!("Not yet implemented")
     }
 }
 
-impl<T:Clone + FloatChannel> ToHSV for HSV<T> {
+impl<T:Clone + FloatChannel> ToHsv for Hsv<T> {
     #[inline]
-    fn to_hsv<U:FloatChannel>(&self) -> HSV<U> {
-        HSV::new(self.h.to_channel(),
+    fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
+        Hsv::new(self.h.to_channel(),
                  self.s.to_channel(),
                  self.v.to_channel())
     }
 }
 
-impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
-    fn to_rgb<U:Channel>(&self) -> RGB<U> {
-        // Algorithm taken from the Wikipedia article on HSL and HSV:
-        // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
+impl<T:Clone + FloatChannel> ToRgb for Hsv<T> {
+    fn to_rgb<U:Channel>(&self) -> Rgb<U> {
+        // Algorithm taken from the Wikipedia article on HSL and Hsv:
+        // http://en.wikipedia.org/wiki/HSL_and_Hsv#From_Hsv
 
         let chr = self.v * self.s;
         let h = self.h / cast(60u8);
@@ -116,13 +116,13 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
         let x = chr * (one::<T>() - ((h % cast(2u8)) - one()).abs());
 
         let mut rgb =
-            if      h < cast(1u8) { RGB::new(chr.clone(), x, zero()) }
-            else if h < cast(2u8) { RGB::new(x, chr.clone(), zero()) }
-            else if h < cast(3u8) { RGB::new(zero(), chr.clone(), x) }
-            else if h < cast(4u8) { RGB::new(zero(), x, chr.clone()) }
-            else if h < cast(5u8) { RGB::new(x, zero(), chr.clone()) }
-            else if h < cast(6u8) { RGB::new(chr.clone(), zero(), x) }
-            else                  { RGB::new(zero(), zero(), zero()) };
+            if      h < cast(1u8) { Rgb::new(chr.clone(), x, zero()) }
+            else if h < cast(2u8) { Rgb::new(x, chr.clone(), zero()) }
+            else if h < cast(3u8) { Rgb::new(zero(), chr.clone(), x) }
+            else if h < cast(4u8) { Rgb::new(zero(), x, chr.clone()) }
+            else if h < cast(5u8) { Rgb::new(x, zero(), chr.clone()) }
+            else if h < cast(6u8) { Rgb::new(chr.clone(), zero(), x) }
+            else                  { Rgb::new(zero(), zero(), zero()) };
 
         // match the value by adding the same amount to each component
         let mn = self.v - chr;
@@ -137,22 +137,22 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
 
 #[cfg(test)]
 mod tests {
-    use hsv::{HSV, ToHSV};
-    use rgb::{RGB, ToRGB};
+    use hsv::{Hsv, ToHsv};
+    use rgb::{Rgb, ToRgb};
 
     #[test]
     fn test_hsv_to_hsv() {
-        assert_eq!(HSV::<f64>::new(0.0, 0.0, 1.0).to_hsv::<f32>(),   HSV::<f32>::new(0.0, 0.0, 1.0));
-        assert_eq!(HSV::<f64>::new(0.0, 1.0, 0.6).to_hsv::<f32>(),   HSV::<f32>::new(0.0, 1.0, 0.6));
-        assert_eq!(HSV::<f64>::new(120.0, 1.0, 0.6).to_hsv::<f32>(), HSV::<f32>::new(120.0, 1.0, 0.6));
-        assert_eq!(HSV::<f64>::new(240.0, 1.0, 0.6).to_hsv::<f32>(), HSV::<f32>::new(240.0, 1.0, 0.6));
+        assert_eq!(Hsv::<f64>::new(0.0, 0.0, 1.0).to_hsv::<f32>(),   Hsv::<f32>::new(0.0, 0.0, 1.0));
+        assert_eq!(Hsv::<f64>::new(0.0, 1.0, 0.6).to_hsv::<f32>(),   Hsv::<f32>::new(0.0, 1.0, 0.6));
+        assert_eq!(Hsv::<f64>::new(120.0, 1.0, 0.6).to_hsv::<f32>(), Hsv::<f32>::new(120.0, 1.0, 0.6));
+        assert_eq!(Hsv::<f64>::new(240.0, 1.0, 0.6).to_hsv::<f32>(), Hsv::<f32>::new(240.0, 1.0, 0.6));
     }
 
     #[test]
     fn test_hsv_to_rgb() {
-        assert_eq!(HSV::<f32>::new(0.0, 0.0, 1.0).to_rgb::<u8>(),   RGB::<u8>::new(0xFF, 0xFF, 0xFF));
-        assert_eq!(HSV::<f32>::new(0.0, 1.0, 0.6).to_rgb::<u8>(),   RGB::<u8>::new(0x99, 0x00, 0x00));
-        assert_eq!(HSV::<f32>::new(120.0, 1.0, 0.6).to_rgb::<u8>(), RGB::<u8>::new(0x00, 0x99, 0x00));
-        assert_eq!(HSV::<f32>::new(240.0, 1.0, 0.6).to_rgb::<u8>(), RGB::<u8>::new(0x00, 0x00, 0x99));
+        assert_eq!(Hsv::<f32>::new(0.0, 0.0, 1.0).to_rgb::<u8>(),   Rgb::<u8>::new(0xFF, 0xFF, 0xFF));
+        assert_eq!(Hsv::<f32>::new(0.0, 1.0, 0.6).to_rgb::<u8>(),   Rgb::<u8>::new(0x99, 0x00, 0x00));
+        assert_eq!(Hsv::<f32>::new(120.0, 1.0, 0.6).to_rgb::<u8>(), Rgb::<u8>::new(0x00, 0x99, 0x00));
+        assert_eq!(Hsv::<f32>::new(240.0, 1.0, 0.6).to_rgb::<u8>(), Rgb::<u8>::new(0x00, 0x00, 0x99));
     }
 }

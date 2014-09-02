@@ -25,9 +25,9 @@
 
 pub use self::alpha::AlphaColor;
 pub use self::channel::{Channel, FloatChannel};
-pub use self::hsv::{HSV, ToHSV};
-pub use self::rgb::{RGB, ToRGB};
-pub use self::srgb::SRGB;
+pub use self::hsv::{Hsv, ToHsv};
+pub use self::rgb::{Rgb, ToRgb};
+pub use self::srgb::Srgb;
 pub use self::ycbcr::YCbCr;
 
 use std::num::{One, Zero};
