@@ -14,7 +14,7 @@
 // limitations under the License.
 
 
-#![crate_id = "color#0.1"]
+#![crate_name = "color"]
 #![comment = "A library that provides types and conversions for working with
              various color formats."]
 #![license = "ASL2"]
@@ -54,4 +54,12 @@ pub trait Color<T>: Copy {
 
 pub trait FloatColor<T>: Color<T> {
     fn normalize(self) -> Self;
+}
+
+pub trait Color3<T>: Color<T> {
+    fn into_fixed(self) -> [T, ..3];
+}
+
+pub trait Color4<T>: Color<T> {
+    fn into_fixed(self) -> [T, ..4];
 }

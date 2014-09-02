@@ -15,7 +15,7 @@
 
 use std::num;
 
-use super::{Color, FloatColor, one, zero};
+use super::{Color, FloatColor, Color3, one, zero};
 use channel::{Channel, FloatChannel};
 use rgb::{RGB, ToRGB};
 
@@ -66,6 +66,14 @@ impl<T:FloatChannel> FloatColor<T> for HSV<T> {
         HSV::new(self.h.normalize_degrees(),
                  self.s.normalize_channel(),
                  self.v.normalize_channel())
+    }
+}
+
+impl<T: FloatChannel> Color3<T> for HSV<T> {
+    fn into_fixed(self) -> [T, ..3] {
+        match self {
+            HSV { h, s, v } => [h, s, v],
+        }
     }
 }
 
@@ -129,8 +137,8 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
 
 #[cfg(test)]
 mod tests {
-    use hsv::*;
-    use rgb::*;
+    use hsv::{HSV, ToHSV};
+    use rgb::{RGB, ToRGB};
 
     #[test]
     fn test_hsv_to_hsv() {

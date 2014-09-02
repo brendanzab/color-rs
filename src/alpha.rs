@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use super::Color;
+use super::{Color, Color3, Color4};
 use channel::Channel;
 
 #[deriving(Clone, PartialEq, Eq, Show)]
@@ -44,6 +44,16 @@ impl<T: Channel, C: Color<T>> Color<T> for AlphaColor<T, C> {
         AlphaColor {
             c: self.c.inverse(),
             a: self.a.invert_channel(),
+        }
+    }
+}
+
+impl<T: Channel, C: Color3<T>> Color4<T> for AlphaColor<T, C> {
+    fn into_fixed(self) -> [T, ..4] {
+        match self {
+            AlphaColor { c, a } => match c.into_fixed() {
+                [r, g, b] => [r, g, b, a],
+            },
         }
     }
 }

@@ -4,6 +4,7 @@ name = "color"
 version = "0.0.1"
 authors = ["Brendan Zabarauskas <bjzaba@yahoo.com.au>", "Luqman Aden"]
 
-[[lib]]
+[lib]
 
 name = "color"
+path = "src/lib.rs"
