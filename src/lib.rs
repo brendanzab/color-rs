@@ -24,6 +24,7 @@
 #![feature(globs)]
 
 pub use self::alpha::AlphaColor;
+pub use self::alpha::{Rgba, Hsva, Srgba, YCbCra};
 pub use self::channel::{Channel, FloatChannel};
 pub use self::hsv::{Hsv, ToHsv};
 pub use self::rgb::{Rgb, ToRgb};
