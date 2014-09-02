@@ -137,8 +137,8 @@ impl<T:Clone + FloatChannel> ToRGB for HSV<T> {
 
 #[cfg(test)]
 mod tests {
-    use hsv::*;
-    use rgb::*;
+    use hsv::{HSV, ToHSV};
+    use rgb::{RGB, ToRGB};
 
     #[test]
     fn test_hsv_to_hsv() {

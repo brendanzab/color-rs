@@ -280,8 +280,8 @@ pub mod consts {
 
 #[cfg(test)]
 mod tests {
-    use hsv::*;
-    use rgb::*;
+    use hsv::{HSV, ToHSV};
+    use rgb::{RGB, ToRGB};
 
     #[test]
     fn test_rgb_to_rgb() {
