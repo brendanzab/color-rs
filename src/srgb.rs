@@ -14,11 +14,11 @@
 // limitations under the License.
 
 #[deriving(Clone, PartialEq, Eq, Show)]
-pub struct SRGB<T> { pub r: T, pub g: T, pub b: T }
+pub struct Srgb<T> { pub r: T, pub g: T, pub b: T }
 
-impl<T> SRGB<T> {
+impl<T> Srgb<T> {
     #[inline]
-    pub fn new(r: T, g: T, b: T) -> SRGB<T> {
-        SRGB { r: r, g: g, b: b }
+    pub fn new(r: T, g: T, b: T) -> Srgb<T> {
+        Srgb { r: r, g: g, b: b }
     }
 }

@@ -13,11 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use super::{Color, Color3, Color4};
-use channel::Channel;
+use {Color, Color3, Color4, Channel};
+use {Rgb, Hsv, Srgb, YCbCr};
 
 #[deriving(Clone, PartialEq, Eq, Show)]
 pub struct AlphaColor<T, C> { pub c: C, pub a: T }
+
+pub type Rgba<T> = AlphaColor<T, Rgb<T>>;
+pub type Hsva<T> = AlphaColor<T, Hsv<T>>;
+pub type Srgba<T> = AlphaColor<T, Srgb<T>>;
+pub type YCbCra<T> = AlphaColor<T, YCbCr<T>>;
 
 impl<T: Channel, C: Color<T>> Color<T> for AlphaColor<T, C> {
     /// Clamps the components of the color to the range `(lo,hi)`.
