@@ -23,25 +23,25 @@
 
 #![feature(globs)]
 
-pub use self::alpha::AlphaColor;
-pub use self::alpha::{Rgba, Hsva, Srgba, YCbCra};
-pub use self::channel::{Channel, FloatChannel};
-pub use self::hsv::{Hsv, ToHsv};
-pub use self::rgb::{Rgb, ToRgb};
-pub use self::srgb::Srgb;
-pub use self::ycbcr::YCbCr;
+pub use alpha::AlphaColor;
+pub use alpha::{Rgba, Hsva, Srgba, YCbCra};
+pub use channel::{Channel, FloatChannel};
+pub use hsv::{Hsv, ToHsv};
+pub use rgb::{Rgb, ToRgb, consts};
+pub use srgb::Srgb;
+pub use ycbcr::YCbCr;
 
 use std::num::{One, Zero};
 
-pub mod alpha;
-pub mod channel;
-pub mod hsv;
-pub mod rgb;
-pub mod srgb;
-pub mod ycbcr;
+mod alpha;
+mod channel;
+mod hsv;
+mod rgb;
+mod srgb;
+mod ycbcr;
 
-pub fn zero<T:Zero>() -> T { Zero::zero() }
-pub fn one<T:One>() -> T { One::one() }
+fn zero<T:Zero>() -> T { Zero::zero() }
+fn one<T:One>() -> T { One::one() }
 
 pub trait Color<T>: Copy {
     fn clamp_s(self, lo: T, hi: T) -> Self;

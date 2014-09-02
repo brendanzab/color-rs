@@ -15,9 +15,9 @@
 
 use std::num;
 
-use super::{Color, FloatColor, Color3, zero};
-use channel::{Channel, FloatChannel};
-use hsv::{Hsv, ToHsv};
+use {Color, FloatColor, Color3, zero};
+use {Channel, FloatChannel};
+use {Hsv, ToHsv};
 
 #[deriving(Clone, PartialEq, Eq, Show)]
 pub struct Rgb<T> { pub r: T, pub g: T, pub b: T }
@@ -135,7 +135,7 @@ impl<T:Clone + Channel> ToHsv for Rgb<T> {
 
 /// SVG 1.0 color constants: http://www.w3.org/TR/SVG/types.html#ColorKeywords
 pub mod consts {
-    use super::Rgb;
+    use Rgb;
 
     pub static ALICEBLUE:               Rgb<u8> = Rgb { r: 0xF0, g: 0xF8, b: 0xFF };
     pub static ANTIQUEWHITE:            Rgb<u8> = Rgb { r: 0xFA, g: 0xEB, b: 0xD7 };
@@ -280,8 +280,8 @@ pub mod consts {
 
 #[cfg(test)]
 mod tests {
-    use hsv::{Hsv, ToHsv};
-    use rgb::{Rgb, ToRgb};
+    use {Hsv, ToHsv};
+    use {Rgb, ToRgb};
 
     #[test]
     fn test_rgb_to_rgb() {

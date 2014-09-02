@@ -15,9 +15,9 @@
 
 use std::num;
 
-use super::{Color, FloatColor, Color3, one, zero};
-use channel::{Channel, FloatChannel};
-use rgb::{Rgb, ToRgb};
+use {Color, FloatColor, Color3, one, zero};
+use {Channel, FloatChannel};
+use {Rgb, ToRgb};
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     num::cast(n).unwrap()
@@ -137,8 +137,8 @@ impl<T:Clone + FloatChannel> ToRgb for Hsv<T> {
 
 #[cfg(test)]
 mod tests {
-    use hsv::{Hsv, ToHsv};
-    use rgb::{Rgb, ToRgb};
+    use {Hsv, ToHsv};
+    use {Rgb, ToRgb};
 
     #[test]
     fn test_hsv_to_hsv() {
