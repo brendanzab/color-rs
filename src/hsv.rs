@@ -84,14 +84,14 @@ pub trait ToHsv {
 impl ToHsv for u32 {
     #[inline]
     fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
-        fail!("Not yet implemented")
+        panic!("Not yet implemented")
     }
 }
 
 impl ToHsv for u64 {
     #[inline]
     fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
-        fail!("Not yet implemented")
+        panic!("Not yet implemented")
     }
 }
 
