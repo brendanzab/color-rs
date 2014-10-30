@@ -84,14 +84,14 @@ pub trait ToRgb {
 impl ToRgb for u32 {
     #[inline]
     fn to_rgb<U:Channel>(&self) -> Rgb<U> {
-        fail!("Not yet implemented")
+        panic!("Not yet implemented")
     }
 }
 
 impl ToRgb for u64 {
     #[inline]
     fn to_rgb<U:Channel>(&self) -> Rgb<U> {
-        fail!("Not yet implemented")
+        panic!("Not yet implemented")
     }
 }
 
