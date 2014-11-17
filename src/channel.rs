@@ -16,6 +16,7 @@
 //! Color channel conversions and utility methods
 
 use std;
+use std::num::{Float, Primitive};
 
 fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
     std::num::cast(n).unwrap()
