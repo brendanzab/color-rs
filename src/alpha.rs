@@ -16,7 +16,7 @@
 use {Color, Color3, Color4, Channel};
 use {Rgb, Hsv, Srgb, YCbCr};
 
-#[deriving(Clone, PartialEq, Eq, Show)]
+#[deriving(Clone, Copy, PartialEq, Eq, Show)]
 pub struct AlphaColor<T, C> { pub c: C, pub a: T }
 
 pub type Rgba<T> = AlphaColor<T, Rgb<T>>;
