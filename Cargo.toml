@@ -3,6 +3,7 @@
 name = "color"
 version = "0.0.1"
 authors = ["Brendan Zabarauskas <bjzaba@yahoo.com.au>", "Luqman Aden"]
+description = "A library that provides types and conversions for working with various color formats."
 
 [lib]
 

@@ -16,7 +16,7 @@
 use {Color, Color3, Color4, Channel};
 use {Rgb, Hsv, Srgb, YCbCr};
 
-#[deriving(Clone, Copy, PartialEq, Eq, Show)]
+#[derive(Clone, Copy, PartialEq, Eq, Show)]
 pub struct AlphaColor<T, C> { pub c: C, pub a: T }
 
 pub type Rgba<T> = AlphaColor<T, Rgb<T>>;
@@ -54,7 +54,7 @@ impl<T: Channel, C: Color<T>> Color<T> for AlphaColor<T, C> {
 }
 
 impl<T: Channel, C: Color3<T>> Color4<T> for AlphaColor<T, C> {
-    fn into_fixed(self) -> [T, ..4] {
+    fn into_fixed(self) -> [T; 4] {
         match self {
             AlphaColor { c, a } => match c.into_fixed() {
                 [r, g, b] => [r, g, b, a],

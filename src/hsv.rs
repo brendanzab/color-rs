@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::num;
+use std::num::{self, Float};
 
-use {Color, FloatColor, Color3, one, zero};
+use {Color, FloatColor, Color3};
 use {Channel, FloatChannel};
 use {Rgb, ToRgb};
 
@@ -23,7 +23,7 @@ fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     num::cast(n).unwrap()
 }
 
-#[deriving(Clone, Copy, PartialEq, Eq, Show)]
+#[derive(Clone, Copy, PartialEq, Eq, Show)]
 pub struct Hsv<T> { pub h: T, pub s: T, pub v: T }
 
 impl<T: FloatChannel> Hsv<T> {
@@ -70,7 +70,7 @@ impl<T:FloatChannel> FloatColor<T> for Hsv<T> {
 }
 
 impl<T: FloatChannel> Color3<T> for Hsv<T> {
-    fn into_fixed(self) -> [T, ..3] {
+    fn into_fixed(self) -> [T; 3] {
         match self {
             Hsv { h, s, v } => [h, s, v],
         }
@@ -113,16 +113,17 @@ impl<T:Clone + FloatChannel> ToRgb for Hsv<T> {
         let h = self.h / cast(60u8);
 
         // the 2nd largest component
-        let x = chr * (one::<T>() - ((h % cast(2u8)) - one()).abs());
+        let one: T = Float::one();
+        let x = chr * (one - ((h % cast(2u8)) - Float::one()).abs());
 
         let mut rgb =
-            if      h < cast(1u8) { Rgb::new(chr.clone(), x, zero()) }
-            else if h < cast(2u8) { Rgb::new(x, chr.clone(), zero()) }
-            else if h < cast(3u8) { Rgb::new(zero(), chr.clone(), x) }
-            else if h < cast(4u8) { Rgb::new(zero(), x, chr.clone()) }
-            else if h < cast(5u8) { Rgb::new(x, zero(), chr.clone()) }
-            else if h < cast(6u8) { Rgb::new(chr.clone(), zero(), x) }
-            else                  { Rgb::new(zero(), zero(), zero()) };
+            if      h < cast(1u8) { Rgb::new(chr.clone(), x, Float::zero()) }
+            else if h < cast(2u8) { Rgb::new(x, chr.clone(), Float::zero()) }
+            else if h < cast(3u8) { Rgb::new(Float::zero(), chr.clone(), x) }
+            else if h < cast(4u8) { Rgb::new(Float::zero(), x, chr.clone()) }
+            else if h < cast(5u8) { Rgb::new(x, Float::zero(), chr.clone()) }
+            else if h < cast(6u8) { Rgb::new(chr.clone(), Float::zero(), x) }
+            else                  { Rgb::new(Float::zero(), Float::zero(), Float::zero()) };
 
         // match the value by adding the same amount to each component
         let mn = self.v - chr;
