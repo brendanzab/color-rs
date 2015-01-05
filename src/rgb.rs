@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::num;
+use std::num::{self, Int, Float};
 
-use {Color, FloatColor, Color3, zero};
+use {Color, FloatColor, Color3};
 use {Channel, FloatChannel};
 use {Hsv, ToHsv};
 
-#[deriving(Clone, Copy, PartialEq, Eq, Show)]
+#[derive(Clone, Copy, PartialEq, Eq, Show)]
 pub struct Rgb<T> { pub r: T, pub g: T, pub b: T }
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
@@ -70,7 +70,7 @@ impl<T:FloatChannel> FloatColor<T> for Rgb<T> {
 }
 
 impl<T: Channel> Color3<T> for Rgb<T> {
-    fn into_fixed(self) -> [T, ..3] {
+    fn into_fixed(self) -> [T; 3] {
         match self {
             Rgb { r, g, b } => [r, g, b],
         }
@@ -104,7 +104,7 @@ impl<T:Clone + Channel> ToRgb for Rgb<T> {
     }
 }
 
-impl<T:Clone + Channel> ToHsv for Rgb<T> {
+impl<T:Clone + Channel + Int> ToHsv for Rgb<T> {
     #[inline]
     fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
         // Algorithm taken from the Wikipedia article on HSL and Hsv:
@@ -116,7 +116,7 @@ impl<T:Clone + Channel> ToHsv for Rgb<T> {
         let mn = rgb_u.r.min(rgb_u.g).min(rgb_u.b);
         let chr = mx - mn;
 
-        if chr != zero() {
+        if chr != Float::zero() {
             let h =
                 if      rgb_u.r == mx       { ((rgb_u.g - rgb_u.b) / chr) % cast(6u8) }
                 else if rgb_u.g == mx       { ((rgb_u.b - rgb_u.r) / chr) + cast(2u8) }
@@ -128,7 +128,7 @@ impl<T:Clone + Channel> ToHsv for Rgb<T> {
             Hsv::new(h, s, mx)
 
         } else {
-            Hsv::new(zero(), zero(), mx)
+            Hsv::new(Float::zero(), Float::zero(), mx)
         }
     }
 }

@@ -16,7 +16,7 @@
 //! Color channel conversions and utility methods
 
 use std;
-use std::num::{Float, Primitive};
+use std::num::Float;
 
 fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
     std::num::cast(n).unwrap()
@@ -40,7 +40,7 @@ fn min<T: PartialOrd>(a: T, b: T) -> T {
     }
 }
 
-pub trait Channel: Copy + Primitive {
+pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> {
     fn from<T:Channel>(chan: T) -> Self;
     fn to_channel<T:Channel>(self) -> T { Channel::from(self) }
     fn to_channel_u8(self)  -> u8;
@@ -70,7 +70,7 @@ pub trait Channel: Copy + Primitive {
 impl Channel for u8 {
     #[inline] fn from<T:Channel>(chan: T) -> u8 { chan.to_channel_u8() }
     #[inline] fn to_channel_u8(self)  -> u8  { self }
-    #[inline] fn to_channel_u16(self) -> u16 { (self as u16 << 8) | self as u16 }
+    #[inline] fn to_channel_u16(self) -> u16 { ((self as u16) << 8) | self as u16 }
     #[inline] fn to_channel_f32(self) -> f32 { (self as f32) / (0xFF_u8 as f32) }
     #[inline] fn to_channel_f64(self) -> f64 { (self as f64) / (0xFF_u8 as f64) }
 
