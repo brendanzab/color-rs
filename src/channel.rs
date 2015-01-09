@@ -22,24 +22,6 @@ fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
     std::num::cast(n).unwrap()
 }
 
-// these are WRONG in general but fine for the primitives
-
-fn max<T: PartialOrd>(a: T, b: T) -> T {
-    if a.lt(&b) {
-        b
-    } else {
-        a
-    }
-}
-
-fn min<T: PartialOrd>(a: T, b: T) -> T {
-    if a.lt(&b) {
-        a
-    } else {
-        b
-    }
-}
-
 pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> {
     fn from<T:Channel>(chan: T) -> Self;
     fn to_channel<T:Channel>(self) -> T { Channel::from(self) }
@@ -58,12 +40,6 @@ pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> {
         } else {
             self
         }
-    }
-    fn max(self, other: Self) -> Self {
-        max(self, other)
-    }
-    fn min(self, other: Self) -> Self {
-        min(self, other)
     }
 }
 
