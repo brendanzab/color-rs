@@ -19,7 +19,7 @@ use {Color, FloatColor, Color3};
 use {Channel, FloatChannel};
 use {Hsv, ToHsv};
 
-#[derive(Clone, Copy, PartialEq, Eq, Show)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Rgb<T> { pub r: T, pub g: T, pub b: T }
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
