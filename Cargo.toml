@@ -9,3 +9,6 @@ description = "A library that provides types and conversions for working with va
 
 name = "color"
 path = "src/lib.rs"
+
+[dependencies]
+num = "0.1"

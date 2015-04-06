@@ -56,8 +56,10 @@ impl<T: Channel, C: Color<T>> Color<T> for AlphaColor<T, C> {
 impl<T: Channel, C: Color3<T>> Color4<T> for AlphaColor<T, C> {
     fn into_fixed(self) -> [T; 4] {
         match self {
-            AlphaColor { c, a } => match c.into_fixed() {
-                [r, g, b] => [r, g, b, a],
+            AlphaColor { c, a } => {
+                let c = c.into_fixed();
+                let (r, g, b) = (c[0], c[1], c[2]);
+                [r, g, b, a]
             },
         }
     }
