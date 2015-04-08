@@ -12,7 +12,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#![feature(std_misc, core)]
+extern crate num;
 
 pub use alpha::AlphaColor;
 pub use alpha::{Rgba, Hsva, Srgba, YCbCra};

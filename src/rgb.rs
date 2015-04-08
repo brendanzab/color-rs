@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::num::{self, Int, Float};
+use num;
+use num::traits::{self, PrimInt, Float, Zero};
 
 use {Color, FloatColor, Color3};
 use {Channel, FloatChannel};
@@ -23,7 +24,7 @@ use {Hsv, ToHsv};
 pub struct Rgb<T> { pub r: T, pub g: T, pub b: T }
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
-    num::cast(n).unwrap()
+    traits::cast(n).unwrap()
 }
 
 impl<T:Channel> Rgb<T> {
@@ -104,7 +105,7 @@ impl<T:Clone + Channel> ToRgb for Rgb<T> {
     }
 }
 
-impl<T:Clone + Channel + Int> ToHsv for Rgb<T> {
+impl<T:Clone + Channel + PrimInt> ToHsv for Rgb<T> {
     #[inline]
     fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
         // Algorithm taken from the Wikipedia article on HSL and Hsv:
@@ -116,7 +117,7 @@ impl<T:Clone + Channel + Int> ToHsv for Rgb<T> {
         let mn = rgb_u.r.min(rgb_u.g).min(rgb_u.b);
         let chr = mx - mn;
 
-        if chr != Float::zero() {
+        if chr != Zero::zero() {
             let h =
                 if      rgb_u.r == mx       { ((rgb_u.g - rgb_u.b) / chr) % cast(6u8) }
                 else if rgb_u.g == mx       { ((rgb_u.b - rgb_u.r) / chr) + cast(2u8) }
@@ -128,7 +129,7 @@ impl<T:Clone + Channel + Int> ToHsv for Rgb<T> {
             Hsv::new(h, s, mx)
 
         } else {
-            Hsv::new(Float::zero(), Float::zero(), mx)
+            Hsv::new(Zero::zero(), Zero::zero(), mx)
         }
     }
 }

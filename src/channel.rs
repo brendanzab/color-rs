@@ -15,11 +15,11 @@
 
 //! Color channel conversions and utility methods
 
-use std;
-use std::num::Float;
+use num;
+use num::traits::Float;
 
-fn cast<T: std::num::NumCast, U: std::num::NumCast>(n: T) -> U {
-    std::num::cast(n).unwrap()
+fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
+    num::traits::cast(n).unwrap()
 }
 
 pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> {

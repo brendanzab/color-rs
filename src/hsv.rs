@@ -13,14 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::num::{self, Float};
+use num;
+use num::traits::{Float, Zero, One};
 
 use {Color, FloatColor, Color3};
 use {Channel, FloatChannel};
 use {Rgb, ToRgb};
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
-    num::cast(n).unwrap()
+    num::traits::cast(n).unwrap()
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -113,17 +114,17 @@ impl<T:Clone + FloatChannel> ToRgb for Hsv<T> {
         let h = self.h / cast(60u8);
 
         // the 2nd largest component
-        let one: T = Float::one();
-        let x = chr * (one - ((h % cast(2u8)) - Float::one()).abs());
+        let one: T = One::one();
+        let x = chr * (one - ((h % cast(2u8)) - One::one()).abs());
 
         let mut rgb =
-            if      h < cast(1u8) { Rgb::new(chr.clone(), x, Float::zero()) }
-            else if h < cast(2u8) { Rgb::new(x, chr.clone(), Float::zero()) }
-            else if h < cast(3u8) { Rgb::new(Float::zero(), chr.clone(), x) }
-            else if h < cast(4u8) { Rgb::new(Float::zero(), x, chr.clone()) }
-            else if h < cast(5u8) { Rgb::new(x, Float::zero(), chr.clone()) }
-            else if h < cast(6u8) { Rgb::new(chr.clone(), Float::zero(), x) }
-            else                  { Rgb::new(Float::zero(), Float::zero(), Float::zero()) };
+            if      h < cast(1u8) { Rgb::new(chr.clone(), x, Zero::zero()) }
+            else if h < cast(2u8) { Rgb::new(x, chr.clone(), Zero::zero()) }
+            else if h < cast(3u8) { Rgb::new(Zero::zero(), chr.clone(), x) }
+            else if h < cast(4u8) { Rgb::new(Zero::zero(), x, chr.clone()) }
+            else if h < cast(5u8) { Rgb::new(x, Zero::zero(), chr.clone()) }
+            else if h < cast(6u8) { Rgb::new(chr.clone(), Zero::zero(), x) }
+            else                  { Rgb::new(Zero::zero(), Zero::zero(), Zero::zero()) };
 
         // match the value by adding the same amount to each component
         let mn = self.v - chr;
