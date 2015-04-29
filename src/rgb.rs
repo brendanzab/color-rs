@@ -14,14 +14,22 @@
 // limitations under the License.
 
 use num;
-use num::traits::{self, PrimInt, Float, Zero};
+use num::traits::{self, Float, Zero, Saturating};
+use std::ops::{Mul,Div,Add,Sub,Index,IndexMut};
+use std::slice;
 
-use {Color, FloatColor, Color3};
+use angle::*;
+
+use AlphaColor;
+use {Color, FloatColor};
 use {Channel, FloatChannel};
 use {Hsv, ToHsv};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Rgb<T> { pub r: T, pub g: T, pub b: T }
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct Rg<T> { pub r: T, pub g: T }
 
 fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
     traits::cast(n).unwrap()
@@ -32,6 +40,79 @@ impl<T:Channel> Rgb<T> {
     pub fn new(r: T, g: T, b: T) -> Rgb<T> {
         Rgb { r: r, g: g, b: b }
     }
+    
+    #[inline]
+    pub fn rg(&self) -> Rg<T>{
+    	Rg{r: self.r, g: self.g}
+    }
+    
+    #[inline]
+    pub fn rb(&self) -> Rg<T>{
+    	Rg{r: self.r, g: self.b}
+    }
+    
+    #[inline]
+    pub fn gr(&self) -> Rg<T>{
+    	Rg{r: self.g, g: self.r}
+    }
+    
+    #[inline]
+    pub fn gb(&self) -> Rg<T>{
+    	Rg{r: self.g, g: self.b}
+    }
+    
+    #[inline]
+    pub fn br(&self) -> Rg<T>{
+    	Rg{r: self.b, g: self.r}
+    }
+    
+    #[inline]
+    pub fn bg(&self) -> Rg<T>{
+    	Rg{r: self.b, g: self.g}
+    }
+    
+    #[inline]
+    pub fn rgb(&self) -> Rgb<T>{
+    	Rgb{r: self.r, g: self.g, b: self.b}
+    }
+    
+    #[inline]
+    pub fn rbg(&self) -> Rgb<T>{
+    	Rgb{r: self.r, g: self.b, b: self.g}
+    }
+    
+    #[inline]
+    pub fn bgr(&self) -> Rgb<T>{
+    	Rgb{r: self.b, g: self.g, b: self.r}
+    }
+    
+    #[inline]
+    pub fn brg(&self) -> Rgb<T>{
+    	Rgb{r: self.b, g: self.r, b: self.g}
+    }
+    
+    #[inline]
+    pub fn grb(&self) -> Rgb<T>{
+    	Rgb{r: self.g, g: self.r, b: self.b}
+    }
+    
+    #[inline]
+    pub fn gbr(&self) -> Rgb<T>{
+    	Rgb{r: self.g, g: self.b, b: self.r}
+    }
+}
+
+#[macro_export]
+macro_rules! rgb{
+    ( $r: expr, $g: expr, $b: expr ) => {
+    	Rgb{ r: $r, g: $g, b: $b } 
+    };
+    ( $rg: expr, $b: expr ) => {
+    	Rgb{ r: $rg.r, g: $rg.g, b: $b } 
+    };
+    ( $r: expr, $gb: expr ) => {
+    	Rgb{ r: $r, g: $gb.r, b: $gb.g } 
+    };
 }
 
 impl<T:Channel> Color<T> for Rgb<T> {
@@ -58,23 +139,22 @@ impl<T:Channel> Color<T> for Rgb<T> {
                  self.g.invert_channel(),
                  self.b.invert_channel())
     }
-}
-
-impl<T:FloatChannel> FloatColor<T> for Rgb<T> {
-    /// Normalizes the components of the color by clamping them to the range `(0,1)`.
+    
     #[inline]
-    fn normalize(self) -> Rgb<T> {
-        Rgb::new(self.r.normalize_channel(),
-                 self.g.normalize_channel(),
-                 self.b.normalize_channel())
+    fn mix(self, other: Self, value: T) -> Self {
+    	rgb!(self.r.mix(other.r, value),
+    		 self.g.mix(other.g, value),
+    		 self.b.mix(other.b, value)) 
     }
 }
 
-impl<T: Channel> Color3<T> for Rgb<T> {
-    fn into_fixed(self) -> [T; 3] {
-        match self {
-            Rgb { r, g, b } => [r, g, b],
-        }
+impl<T:FloatChannel> FloatColor<T> for Rgb<T> {
+    /// Clamps the components of the color to the range `(0,1)`.
+    #[inline]
+    fn saturate(self) -> Rgb<T> {
+        Rgb::new(self.r.saturate(),
+                 self.g.saturate(),
+                 self.b.saturate())
     }
 }
 
@@ -85,14 +165,13 @@ pub trait ToRgb {
 impl ToRgb for u32 {
     #[inline]
     fn to_rgb<U:Channel>(&self) -> Rgb<U> {
-        panic!("Not yet implemented")
-    }
-}
-
-impl ToRgb for u64 {
-    #[inline]
-    fn to_rgb<U:Channel>(&self) -> Rgb<U> {
-        panic!("Not yet implemented")
+		let r: u8 = cast((*self >> 16) & 0xff);
+		let g: u8 = cast((*self >> 8) & 0xff);
+		let b: u8 = cast((*self >> 0) & 0xff); 
+		let r: U = Channel::from(r);
+		let g: U = Channel::from(g);
+		let b: U = Channel::from(b); 
+		rgb!(r, g, b)
     }
 }
 
@@ -105,28 +184,141 @@ impl<T:Clone + Channel> ToRgb for Rgb<T> {
     }
 }
 
-impl<T:Clone + Channel + PrimInt> ToHsv for Rgb<T> {
+impl<T,C: ToRgb> ToRgb for AlphaColor<T, C>{
+	#[inline]
+	fn to_rgb<U:Channel>(&self) -> Rgb<U> {
+		self.c.to_rgb()
+	}
+}
+
+impl<T:Channel> Mul for Rgb<T> {
+    type Output = Rgb<T>;
+
     #[inline]
-    fn to_hsv<U:FloatChannel>(&self) -> Hsv<U> {
+    fn mul(self, rhs: Rgb<T>) -> Rgb<T>{
+    	Rgb::new(self.r.normalized_mul(rhs.r),
+    			 self.g.normalized_mul(rhs.g),
+    			 self.b.normalized_mul(rhs.b))
+    }
+}
+
+impl<T:Channel + Mul<T,Output=T>> Mul<T> for Rgb<T> {
+    type Output = Rgb<T>;
+
+    #[inline]
+    fn mul(self, rhs: T) -> Rgb<T>{
+    	Rgb::new(self.r * rhs,
+    			 self.g * rhs,
+    			 self.b * rhs)
+    }
+}
+
+
+impl<T:Channel> Div for Rgb<T> {
+    type Output = Rgb<T>;
+
+    #[inline]
+    fn div(self, rhs: Rgb<T>) -> Rgb<T>{
+    	Rgb::new(self.r.normalized_div(rhs.r),
+    			 self.g.normalized_div(rhs.g),
+    			 self.b.normalized_div(rhs.b))
+    }
+}
+
+impl<T:Channel + Div<T,Output=T>> Div<T> for Rgb<T> {
+    type Output = Rgb<T>;
+
+    #[inline]
+    fn div(self, rhs: T) -> Rgb<T>{
+    	Rgb::new(self.r / rhs,
+    			 self.g / rhs,
+    			 self.b / rhs)
+    }
+}
+
+impl<T:Channel + Add<T,Output=T>> Add for Rgb<T>{
+    type Output = Rgb<T>;
+
+    #[inline]
+    fn add(self, rhs: Rgb<T>) -> Rgb<T>{
+    	Rgb::new(self.r + rhs.r,
+    			 self.g + rhs.g,
+    			 self.b + rhs.b)
+    }
+}
+
+impl<T:Channel + Sub<T,Output=T>> Sub for Rgb<T>{
+    type Output = Rgb<T>;
+
+    #[inline]
+    fn sub(self, rhs: Rgb<T>) -> Rgb<T>{
+    	Rgb::new(self.r - rhs.r,
+    			 self.g - rhs.g,
+    			 self.b - rhs.b)
+    }
+}
+
+impl<T:Channel + Saturating> Saturating for Rgb<T>{
+	fn saturating_add(self, v: Rgb<T>) -> Rgb<T>{
+		Rgb::new(self.r.saturating_add(v.r),
+			self.g.saturating_add(v.g),
+			self.b.saturating_add(v.b))
+	}
+	
+	fn saturating_sub(self, v: Rgb<T>) -> Rgb<T>{
+		Rgb::new(self.r.saturating_sub(v.r),
+			self.g.saturating_sub(v.g),
+			self.b.saturating_sub(v.b))
+	}
+}
+
+impl<T> Index<usize> for Rgb<T>{
+	type Output = T;
+	fn index<'a>(&'a self, index: usize) -> &'a T{
+		self.as_ref().index(index)
+	}
+}
+
+impl<T> IndexMut<usize> for Rgb<T>{
+	fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut T{
+		self.as_mut().index_mut(index)
+	}
+}
+
+impl<T> AsRef<[T]> for Rgb<T>{
+	fn as_ref(&self) -> &[T]{
+		unsafe{ slice::from_raw_parts(&self.r, 3) }
+	}
+}
+
+impl<T> AsMut<[T]> for Rgb<T>{
+	fn as_mut(&mut self) -> &mut [T]{
+		unsafe{ slice::from_raw_parts_mut(&mut self.r, 3) }
+	}
+}
+
+impl<T:Channel> ToHsv for Rgb<T> {
+    #[inline]
+    fn to_hsv<U:Channel>(&self) -> Hsv<U> {
         // Algorithm taken from the Wikipedia article on HSL and Hsv:
         // http://en.wikipedia.org/wiki/HSL_and_Hsv#From_Hsv
 
         let rgb_u = self.to_rgb::<U>();
 
-        let mx = rgb_u.r.max(rgb_u.g).max(rgb_u.b);
-        let mn = rgb_u.r.min(rgb_u.g).min(rgb_u.b);
+        let mx = cast(cast::<U,f64>(rgb_u.r).max(cast(rgb_u.g)).max(cast(rgb_u.b)));
+        let mn = cast(cast::<U,f64>(rgb_u.r).min(cast(rgb_u.g)).min(cast(rgb_u.b)));
         let chr = mx - mn;
 
         if chr != Zero::zero() {
             let h =
                 if      rgb_u.r == mx       { ((rgb_u.g - rgb_u.b) / chr) % cast(6u8) }
                 else if rgb_u.g == mx       { ((rgb_u.b - rgb_u.r) / chr) + cast(2u8) }
-                else      /* rgb_u.b == mx */ { ((rgb_u.r - rgb_u.g) / chr) + cast(4u8) }
+                else    /* rgb_u.b == mx */ { ((rgb_u.r - rgb_u.g) / chr) + cast(4u8) }
             * cast(60u8);
 
             let s = chr / mx;
 
-            Hsv::new(h, s, mx)
+            Hsv::new(Deg(h), s, mx)
 
         } else {
             Hsv::new(Zero::zero(), Zero::zero(), mx)
@@ -283,6 +475,9 @@ pub mod consts {
 mod tests {
     use {Hsv, ToHsv};
     use {Rgb, ToRgb};
+    use FloatColor;
+    use angle::*;
+    use num::Saturating;
 
     #[test]
     fn test_rgb_to_rgb() {
@@ -292,9 +487,20 @@ mod tests {
 
     #[test]
     fn test_rgb_to_hsv() {
-        assert_eq!(Rgb::<u8>::new(0xFF, 0xFF, 0xFF).to_hsv::<f32>(), Hsv::<f32>::new(0.0, 0.0, 1.0));
-        assert_eq!(Rgb::<u8>::new(0x99, 0x00, 0x00).to_hsv::<f32>(), Hsv::<f32>::new(0.0, 1.0, 0.6));
-        assert_eq!(Rgb::<u8>::new(0x00, 0x99, 0x00).to_hsv::<f32>(), Hsv::<f32>::new(120.0, 1.0, 0.6));
-        assert_eq!(Rgb::<u8>::new(0x00, 0x00, 0x99).to_hsv::<f32>(), Hsv::<f32>::new(240.0, 1.0, 0.6));
+        assert_eq!(Rgb::<u8>::new(0xFF, 0xFF, 0xFF).to_hsv::<f32>(), Hsv::<f32>::new(Deg(0.0), 0.0, 1.0));
+        assert_eq!(Rgb::<u8>::new(0x99, 0x00, 0x00).to_hsv::<f32>(), Hsv::<f32>::new(Deg(0.0), 1.0, 0.6));
+        assert_eq!(Rgb::<u8>::new(0x00, 0x99, 0x00).to_hsv::<f32>(), Hsv::<f32>::new(Deg(120.0), 1.0, 0.6));
+        assert_eq!(Rgb::<u8>::new(0x00, 0x00, 0x99).to_hsv::<f32>(), Hsv::<f32>::new(Deg(240.0), 1.0, 0.6));
+    }
+    
+    #[test]
+    fn test_rgb_ops(){
+    	assert_eq!( rgb!(20u8, 20, 20) + rgb!(20, 20, 20), rgb!(40, 40, 40) );
+    	assert_eq!( rgb!(254u8, 254, 254).saturating_add( rgb!(20, 20, 20) ), rgb!(255, 255, 255) );
+    	assert_eq!( rgb!(20u8, 20, 20).saturating_sub( rgb!(50, 50, 50) ), rgb!(0, 0, 0) );
+    	assert_eq!( rgb!(127u8, 127, 127) * rgb!(255, 255, 255), rgb!(127, 127, 127) );
+    	assert_eq!( rgb!(127u8, 127, 127) / rgb!(255, 255, 255), rgb!(127, 127, 127) );
+    	assert_eq!( rgb!(1.0f32, 1.0, 1.0) * 2.0, rgb!(2.0, 2.0, 2.0));
+    	assert_eq!( (rgb!(1.0f32, 1.0, 1.0) * 2.0).saturate(), rgb!(1.0, 1.0, 1.0));
     }
 }

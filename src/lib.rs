@@ -13,19 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 extern crate num;
+extern crate angle;
 
 pub use alpha::AlphaColor;
-pub use alpha::{Rgba, Hsva, Srgba, YCbCra};
+pub use alpha::{Rgba, Hsva, Srgba, YCbCra, ToRgba};
 pub use channel::{Channel, FloatChannel};
 pub use hsv::{Hsv, ToHsv};
-pub use rgb::{Rgb, ToRgb, consts};
+pub use rgb::{Rgb, Rg, ToRgb, consts};
 pub use srgb::Srgb;
 pub use ycbcr::YCbCr;
 
-mod alpha;
+#[macro_use] mod rgb;
+#[macro_use] mod alpha;
 mod channel;
 mod hsv;
-mod rgb;
 mod srgb;
 mod ycbcr;
 
@@ -33,20 +34,13 @@ pub trait Color<T>: Copy {
     fn clamp_s(self, lo: T, hi: T) -> Self;
     fn clamp_c(self, lo: Self, hi: Self) -> Self;
     fn inverse(self) -> Self;
-    // fn mix(&self, other: &Self, value: T) -> Self;
+    fn mix(self, other: Self, value: T) -> Self;
     // fn saturation(&self, value: T) -> Self;
     // fn exposure(&self, value: T) -> Self;
     // fn brightness(&self, value: T) -> Self;
 }
 
 pub trait FloatColor<T>: Color<T> {
-    fn normalize(self) -> Self;
+    fn saturate(self) -> Self;
 }
 
-pub trait Color3<T>: Color<T> {
-    fn into_fixed(self) -> [T; 3];
-}
-
-pub trait Color4<T>: Color<T> {
-    fn into_fixed(self) -> [T; 4];
-}

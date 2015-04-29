@@ -2,7 +2,7 @@
 
 name = "color"
 version = "0.0.2"
-authors = ["Brendan Zabarauskas <bjzaba@yahoo.com.au>", "Luqman Aden"]
+authors = ["Brendan Zabarauskas <bjzaba@yahoo.com.au>", "Luqman Aden", "Arturo Castro"]
 description = "A library that provides types and conversions for working with various color formats."
 
 [lib]
@@ -12,3 +12,4 @@ path = "src/lib.rs"
 
 [dependencies]
 num = "0.1"
+angle = "0.1"
