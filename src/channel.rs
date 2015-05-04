@@ -15,8 +15,8 @@
 
 //! Color channel conversions and utility methods
 
-use num::{Float,NumCast,Num,zero,one};
-use std::{u8,u16};
+use num::{Float, NumCast, Num, zero, one};
+use std::{u8, u16};
 
 pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> + Num + NumCast {
     fn from<T:Channel>(chan: T) -> Self;
@@ -40,19 +40,19 @@ pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> + Num + NumCast {
     
     #[inline]
     fn normalized_mul(self, rhs: Self) -> Self {
-    	Channel::from(self.to_channel_f32() * rhs.to_channel_f32())
+        Channel::from(self.to_channel_f32() * rhs.to_channel_f32())
     }
     
     #[inline]
     fn normalized_div(self, rhs: Self) -> Self {
-    	Channel::from(self.to_channel_f32() / rhs.to_channel_f32())
+        Channel::from(self.to_channel_f32() / rhs.to_channel_f32())
     }
     
     fn max() -> Self;
     
     #[inline]
-    fn mix(self, rhs: Self, value: Self) -> Self{
-    	(self + (rhs - self).normalized_mul(value))
+    fn mix(self, rhs: Self, value: Self) -> Self {
+        (self + (rhs - self).normalized_mul(value))
     }
 }
 
@@ -91,12 +91,12 @@ impl Channel for f32 {
     
     #[inline]
     fn normalized_mul(self, rhs: Self) -> Self {
-    	self * rhs
+        self * rhs
     }
     
     #[inline]
     fn normalized_div(self, rhs: Self) -> Self {
-    	self / rhs
+        self / rhs
     }
     
     #[inline] fn max() -> f32{ 1.0 }
@@ -113,12 +113,12 @@ impl Channel for f64 {
     
     #[inline]
     fn normalized_mul(self, rhs: Self) -> Self {
-    	self * rhs
+        self * rhs
     }
     
     #[inline]
     fn normalized_div(self, rhs: Self) -> Self {
-    	self / rhs
+        self / rhs
     }
     
     #[inline] fn max() -> f64{ 1.0 }

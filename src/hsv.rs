@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use num::{self,zero};
+use num::{self, zero};
 use num::traits::{Float, Zero};
 use angle::*;
 
@@ -62,7 +62,7 @@ impl<T: Channel> Color<T> for Hsv<T> {
     
     #[inline]
     fn mix(self, other: Self, value: T) -> Self {
-    	self.to_rgb().mix(other.to_rgb(),value).to_hsv() // TODO: can we mix the hsv directly?
+        self.to_rgb().mix(other.to_rgb(),value).to_hsv() // TODO: can we mix the hsv directly?
     }
 }
 
@@ -107,30 +107,30 @@ impl<T:Channel> ToHsv for Hsv<T> {
 impl<T:Clone + Channel> ToRgb for Hsv<T> {
     fn to_rgb<U:Channel>(&self) -> Rgb<U> {
         if self.v.is_zero() {
-			rgb!(zero(), zero(), zero())
-		} else if self.s.is_zero() {
-			let gray = Channel::from(self.v);
-			rgb!(gray, gray, gray)
-		} else {
-			let max_f: f64 = cast(T::max()); 
-			let hue: f64 = cast(self.h.wrap().value());
-			let hue_six: f64 = hue / 360f64 * 6f64;
-			let hue_six_cat: usize = cast(hue_six);
-			let hue_six_rem: T = cast(hue_six.fract() * max_f);
-			let pv = Channel::from((T::max() - self.s).normalized_mul(self.v));
-			let qv = Channel::from((T::max() - self.s.normalized_mul(hue_six_rem)).normalized_mul(self.v));
-			let tv = Channel::from((T::max() - self.s.normalized_mul(T::max() - hue_six_rem)).normalized_mul(self.v));
-			let b: U = Channel::from(self.v);
-			match hue_six_cat {
-				0 | 6 => rgb!(b,tv,pv),
-				1 =>	 rgb!(qv, b, pv),
-				2 =>	 rgb!(pv, b, tv),
-				3 =>	 rgb!(pv, qv, b),
-				4 =>	 rgb!(tv, pv, b),
-				5 =>	 rgb!(b, pv, qv),
-				_ => panic!("Unreachable code")
-			}
-		}
+            rgb!(zero(), zero(), zero())
+        } else if self.s.is_zero() {
+            let gray = Channel::from(self.v);
+            rgb!(gray, gray, gray)
+        } else {
+            let max_f: f64 = cast(T::max()); 
+            let hue: f64 = cast(self.h.wrap().value());
+            let hue_six: f64 = hue / 360f64 * 6f64;
+            let hue_six_cat: usize = cast(hue_six);
+            let hue_six_rem: T = cast(hue_six.fract() * max_f);
+            let pv = Channel::from((T::max() - self.s).normalized_mul(self.v));
+            let qv = Channel::from((T::max() - self.s.normalized_mul(hue_six_rem)).normalized_mul(self.v));
+            let tv = Channel::from((T::max() - self.s.normalized_mul(T::max() - hue_six_rem)).normalized_mul(self.v));
+            let b: U = Channel::from(self.v);
+            match hue_six_cat {
+                0 | 6 => rgb!(b,tv,pv),
+                1 =>     rgb!(qv, b, pv),
+                2 =>     rgb!(pv, b, tv),
+                3 =>     rgb!(pv, qv, b),
+                4 =>     rgb!(tv, pv, b),
+                5 =>     rgb!(b, pv, qv),
+                _ => panic!("Unreachable code")
+            }
+        }
     }
 }
 

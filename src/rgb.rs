@@ -15,7 +15,7 @@
 
 use num;
 use num::traits::{self, Float, Zero, Saturating};
-use std::ops::{Mul,Div,Add,Sub,Index,IndexMut};
+use std::ops::{Mul, Div, Add, Sub, Index, IndexMut};
 use std::slice;
 
 use angle::*;
@@ -42,76 +42,76 @@ impl<T:Channel> Rgb<T> {
     }
     
     #[inline]
-    pub fn rg(&self) -> Rg<T>{
-    	Rg{r: self.r, g: self.g}
+    pub fn rg(&self) -> Rg<T> {
+        Rg{r: self.r, g: self.g}
     }
     
     #[inline]
-    pub fn rb(&self) -> Rg<T>{
-    	Rg{r: self.r, g: self.b}
+    pub fn rb(&self) -> Rg<T> {
+        Rg{r: self.r, g: self.b}
     }
     
     #[inline]
-    pub fn gr(&self) -> Rg<T>{
-    	Rg{r: self.g, g: self.r}
+    pub fn gr(&self) -> Rg<T> {
+        Rg{r: self.g, g: self.r}
     }
     
     #[inline]
-    pub fn gb(&self) -> Rg<T>{
-    	Rg{r: self.g, g: self.b}
+    pub fn gb(&self) -> Rg<T> {
+        Rg{r: self.g, g: self.b}
     }
     
     #[inline]
-    pub fn br(&self) -> Rg<T>{
-    	Rg{r: self.b, g: self.r}
+    pub fn br(&self) -> Rg<T> {
+        Rg{r: self.b, g: self.r}
     }
     
     #[inline]
-    pub fn bg(&self) -> Rg<T>{
-    	Rg{r: self.b, g: self.g}
+    pub fn bg(&self) -> Rg<T> {
+        Rg{r: self.b, g: self.g}
     }
     
     #[inline]
-    pub fn rgb(&self) -> Rgb<T>{
-    	Rgb{r: self.r, g: self.g, b: self.b}
+    pub fn rgb(&self) -> Rgb<T> {
+        Rgb{r: self.r, g: self.g, b: self.b}
     }
     
     #[inline]
-    pub fn rbg(&self) -> Rgb<T>{
-    	Rgb{r: self.r, g: self.b, b: self.g}
+    pub fn rbg(&self) -> Rgb<T> {
+        Rgb{r: self.r, g: self.b, b: self.g}
     }
     
     #[inline]
-    pub fn bgr(&self) -> Rgb<T>{
-    	Rgb{r: self.b, g: self.g, b: self.r}
+    pub fn bgr(&self) -> Rgb<T> {
+        Rgb{r: self.b, g: self.g, b: self.r}
     }
     
     #[inline]
-    pub fn brg(&self) -> Rgb<T>{
-    	Rgb{r: self.b, g: self.r, b: self.g}
+    pub fn brg(&self) -> Rgb<T> {
+        Rgb{r: self.b, g: self.r, b: self.g}
     }
     
     #[inline]
-    pub fn grb(&self) -> Rgb<T>{
-    	Rgb{r: self.g, g: self.r, b: self.b}
+    pub fn grb(&self) -> Rgb<T> {
+        Rgb{r: self.g, g: self.r, b: self.b}
     }
     
     #[inline]
-    pub fn gbr(&self) -> Rgb<T>{
-    	Rgb{r: self.g, g: self.b, b: self.r}
+    pub fn gbr(&self) -> Rgb<T> {
+        Rgb{r: self.g, g: self.b, b: self.r}
     }
 }
 
 #[macro_export]
 macro_rules! rgb{
     ( $r: expr, $g: expr, $b: expr ) => {
-    	Rgb{ r: $r, g: $g, b: $b } 
+        Rgb{ r: $r, g: $g, b: $b } 
     };
     ( $rg: expr, $b: expr ) => {
-    	Rgb{ r: $rg.r, g: $rg.g, b: $b } 
+        Rgb{ r: $rg.r, g: $rg.g, b: $b } 
     };
     ( $r: expr, $gb: expr ) => {
-    	Rgb{ r: $r, g: $gb.r, b: $gb.g } 
+        Rgb{ r: $r, g: $gb.r, b: $gb.g } 
     };
 }
 
@@ -142,9 +142,9 @@ impl<T:Channel> Color<T> for Rgb<T> {
     
     #[inline]
     fn mix(self, other: Self, value: T) -> Self {
-    	rgb!(self.r.mix(other.r, value),
-    		 self.g.mix(other.g, value),
-    		 self.b.mix(other.b, value)) 
+        rgb!(self.r.mix(other.r, value),
+             self.g.mix(other.g, value),
+             self.b.mix(other.b, value)) 
     }
 }
 
@@ -165,13 +165,13 @@ pub trait ToRgb {
 impl ToRgb for u32 {
     #[inline]
     fn to_rgb<U:Channel>(&self) -> Rgb<U> {
-		let r: u8 = cast((*self >> 16) & 0xff);
-		let g: u8 = cast((*self >> 8) & 0xff);
-		let b: u8 = cast((*self >> 0) & 0xff); 
-		let r: U = Channel::from(r);
-		let g: U = Channel::from(g);
-		let b: U = Channel::from(b); 
-		rgb!(r, g, b)
+        let r: u8 = cast((*self >> 16) & 0xff);
+        let g: u8 = cast((*self >> 8) & 0xff);
+        let b: u8 = cast((*self >> 0) & 0xff); 
+        let r: U = Channel::from(r);
+        let g: U = Channel::from(g);
+        let b: U = Channel::from(b); 
+        rgb!(r, g, b)
     }
 }
 
@@ -184,21 +184,21 @@ impl<T:Clone + Channel> ToRgb for Rgb<T> {
     }
 }
 
-impl<T,C: ToRgb> ToRgb for AlphaColor<T, C>{
-	#[inline]
-	fn to_rgb<U:Channel>(&self) -> Rgb<U> {
-		self.c.to_rgb()
-	}
+impl<T,C: ToRgb> ToRgb for AlphaColor<T, C> {
+    #[inline]
+    fn to_rgb<U:Channel>(&self) -> Rgb<U> {
+        self.c.to_rgb()
+    }
 }
 
 impl<T:Channel> Mul for Rgb<T> {
     type Output = Rgb<T>;
 
     #[inline]
-    fn mul(self, rhs: Rgb<T>) -> Rgb<T>{
-    	Rgb::new(self.r.normalized_mul(rhs.r),
-    			 self.g.normalized_mul(rhs.g),
-    			 self.b.normalized_mul(rhs.b))
+    fn mul(self, rhs: Rgb<T>) -> Rgb<T> {
+        Rgb::new(self.r.normalized_mul(rhs.r),
+                 self.g.normalized_mul(rhs.g),
+                 self.b.normalized_mul(rhs.b))
     }
 }
 
@@ -206,10 +206,10 @@ impl<T:Channel + Mul<T,Output=T>> Mul<T> for Rgb<T> {
     type Output = Rgb<T>;
 
     #[inline]
-    fn mul(self, rhs: T) -> Rgb<T>{
-    	Rgb::new(self.r * rhs,
-    			 self.g * rhs,
-    			 self.b * rhs)
+    fn mul(self, rhs: T) -> Rgb<T> {
+        Rgb::new(self.r * rhs,
+                 self.g * rhs,
+                 self.b * rhs)
     }
 }
 
@@ -218,10 +218,10 @@ impl<T:Channel> Div for Rgb<T> {
     type Output = Rgb<T>;
 
     #[inline]
-    fn div(self, rhs: Rgb<T>) -> Rgb<T>{
-    	Rgb::new(self.r.normalized_div(rhs.r),
-    			 self.g.normalized_div(rhs.g),
-    			 self.b.normalized_div(rhs.b))
+    fn div(self, rhs: Rgb<T>) -> Rgb<T> {
+        Rgb::new(self.r.normalized_div(rhs.r),
+                 self.g.normalized_div(rhs.g),
+                 self.b.normalized_div(rhs.b))
     }
 }
 
@@ -229,72 +229,72 @@ impl<T:Channel + Div<T,Output=T>> Div<T> for Rgb<T> {
     type Output = Rgb<T>;
 
     #[inline]
-    fn div(self, rhs: T) -> Rgb<T>{
-    	Rgb::new(self.r / rhs,
-    			 self.g / rhs,
-    			 self.b / rhs)
+    fn div(self, rhs: T) -> Rgb<T> {
+        Rgb::new(self.r / rhs,
+                 self.g / rhs,
+                 self.b / rhs)
     }
 }
 
-impl<T:Channel + Add<T,Output=T>> Add for Rgb<T>{
+impl<T:Channel + Add<T,Output=T>> Add for Rgb<T> {
     type Output = Rgb<T>;
 
     #[inline]
-    fn add(self, rhs: Rgb<T>) -> Rgb<T>{
-    	Rgb::new(self.r + rhs.r,
-    			 self.g + rhs.g,
-    			 self.b + rhs.b)
+    fn add(self, rhs: Rgb<T>) -> Rgb<T> {
+        Rgb::new(self.r + rhs.r,
+                 self.g + rhs.g,
+                 self.b + rhs.b)
     }
 }
 
-impl<T:Channel + Sub<T,Output=T>> Sub for Rgb<T>{
+impl<T:Channel + Sub<T,Output=T>> Sub for Rgb<T> {
     type Output = Rgb<T>;
 
     #[inline]
-    fn sub(self, rhs: Rgb<T>) -> Rgb<T>{
-    	Rgb::new(self.r - rhs.r,
-    			 self.g - rhs.g,
-    			 self.b - rhs.b)
+    fn sub(self, rhs: Rgb<T>) -> Rgb<T> {
+        Rgb::new(self.r - rhs.r,
+                 self.g - rhs.g,
+                 self.b - rhs.b)
     }
 }
 
-impl<T:Channel + Saturating> Saturating for Rgb<T>{
-	fn saturating_add(self, v: Rgb<T>) -> Rgb<T>{
-		Rgb::new(self.r.saturating_add(v.r),
-			self.g.saturating_add(v.g),
-			self.b.saturating_add(v.b))
-	}
-	
-	fn saturating_sub(self, v: Rgb<T>) -> Rgb<T>{
-		Rgb::new(self.r.saturating_sub(v.r),
-			self.g.saturating_sub(v.g),
-			self.b.saturating_sub(v.b))
-	}
+impl<T:Channel + Saturating> Saturating for Rgb<T> {
+    fn saturating_add(self, v: Rgb<T>) -> Rgb<T> {
+        Rgb::new(self.r.saturating_add(v.r),
+            self.g.saturating_add(v.g),
+            self.b.saturating_add(v.b))
+    }
+    
+    fn saturating_sub(self, v: Rgb<T>) -> Rgb<T> {
+        Rgb::new(self.r.saturating_sub(v.r),
+            self.g.saturating_sub(v.g),
+            self.b.saturating_sub(v.b))
+    }
 }
 
-impl<T> Index<usize> for Rgb<T>{
-	type Output = T;
-	fn index<'a>(&'a self, index: usize) -> &'a T{
-		self.as_ref().index(index)
-	}
+impl<T> Index<usize> for Rgb<T> {
+    type Output = T;
+    fn index<'a>(&'a self, index: usize) -> &'a T {
+        self.as_ref().index(index)
+    }
 }
 
-impl<T> IndexMut<usize> for Rgb<T>{
-	fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut T{
-		self.as_mut().index_mut(index)
-	}
+impl<T> IndexMut<usize> for Rgb<T> {
+    fn index_mut<'a>(&'a mut self, index: usize) -> &'a mut T {
+        self.as_mut().index_mut(index)
+    }
 }
 
-impl<T> AsRef<[T]> for Rgb<T>{
-	fn as_ref(&self) -> &[T]{
-		unsafe{ slice::from_raw_parts(&self.r, 3) }
-	}
+impl<T> AsRef<[T]> for Rgb<T> {
+    fn as_ref(&self) -> &[T] {
+        unsafe{ slice::from_raw_parts(&self.r, 3) }
+    }
 }
 
-impl<T> AsMut<[T]> for Rgb<T>{
-	fn as_mut(&mut self) -> &mut [T]{
-		unsafe{ slice::from_raw_parts_mut(&mut self.r, 3) }
-	}
+impl<T> AsMut<[T]> for Rgb<T> {
+    fn as_mut(&mut self) -> &mut [T] {
+        unsafe{ slice::from_raw_parts_mut(&mut self.r, 3) }
+    }
 }
 
 impl<T:Channel> ToHsv for Rgb<T> {
@@ -495,12 +495,12 @@ mod tests {
     
     #[test]
     fn test_rgb_ops(){
-    	assert_eq!( rgb!(20u8, 20, 20) + rgb!(20, 20, 20), rgb!(40, 40, 40) );
-    	assert_eq!( rgb!(254u8, 254, 254).saturating_add( rgb!(20, 20, 20) ), rgb!(255, 255, 255) );
-    	assert_eq!( rgb!(20u8, 20, 20).saturating_sub( rgb!(50, 50, 50) ), rgb!(0, 0, 0) );
-    	assert_eq!( rgb!(127u8, 127, 127) * rgb!(255, 255, 255), rgb!(127, 127, 127) );
-    	assert_eq!( rgb!(127u8, 127, 127) / rgb!(255, 255, 255), rgb!(127, 127, 127) );
-    	assert_eq!( rgb!(1.0f32, 1.0, 1.0) * 2.0, rgb!(2.0, 2.0, 2.0));
-    	assert_eq!( (rgb!(1.0f32, 1.0, 1.0) * 2.0).saturate(), rgb!(1.0, 1.0, 1.0));
+        assert_eq!( rgb!(20u8, 20, 20) + rgb!(20, 20, 20), rgb!(40, 40, 40) );
+        assert_eq!( rgb!(254u8, 254, 254).saturating_add( rgb!(20, 20, 20) ), rgb!(255, 255, 255) );
+        assert_eq!( rgb!(20u8, 20, 20).saturating_sub( rgb!(50, 50, 50) ), rgb!(0, 0, 0) );
+        assert_eq!( rgb!(127u8, 127, 127) * rgb!(255, 255, 255), rgb!(127, 127, 127) );
+        assert_eq!( rgb!(127u8, 127, 127) / rgb!(255, 255, 255), rgb!(127, 127, 127) );
+        assert_eq!( rgb!(1.0f32, 1.0, 1.0) * 2.0, rgb!(2.0, 2.0, 2.0));
+        assert_eq!( (rgb!(1.0f32, 1.0, 1.0) * 2.0).saturate(), rgb!(1.0, 1.0, 1.0));
     }
 }
