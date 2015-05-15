@@ -15,14 +15,10 @@
 
 //! Color channel conversions and utility methods
 
-use num;
-use num::traits::Float;
+use num::{Float, NumCast, Num, zero, one};
+use std::{u8, u16};
 
-fn cast<T: num::NumCast, U: num::NumCast>(n: T) -> U {
-    num::traits::cast(n).unwrap()
-}
-
-pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> {
+pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> + Num + NumCast {
     fn from<T:Channel>(chan: T) -> Self;
     fn to_channel<T:Channel>(self) -> T { Channel::from(self) }
     fn to_channel_u8(self)  -> u8;
@@ -41,6 +37,23 @@ pub trait Channel: Copy + Sized + Clone + PartialOrd<Self> {
             self
         }
     }
+    
+    #[inline]
+    fn normalized_mul(self, rhs: Self) -> Self {
+        Channel::from(self.to_channel_f32() * rhs.to_channel_f32())
+    }
+    
+    #[inline]
+    fn normalized_div(self, rhs: Self) -> Self {
+        Channel::from(self.to_channel_f32() / rhs.to_channel_f32())
+    }
+    
+    fn max() -> Self;
+    
+    #[inline]
+    fn mix(self, rhs: Self, value: Self) -> Self {
+        (self + (rhs - self).normalized_mul(value))
+    }
 }
 
 impl Channel for u8 {
@@ -51,6 +64,8 @@ impl Channel for u8 {
     #[inline] fn to_channel_f64(self) -> f64 { (self as f64) / (0xFF_u8 as f64) }
 
     #[inline] fn invert_channel(self) -> u8 { !self }
+    
+    #[inline] fn max() -> u8{ u8::MAX }
 }
 
 impl Channel for u16 {
@@ -61,6 +76,8 @@ impl Channel for u16 {
     #[inline] fn to_channel_f64(self) -> f64 { (self / 0xFFFF) as f64 }
 
     #[inline] fn invert_channel(self) -> u16 { !self }
+    
+    #[inline] fn max() -> u16{ u16::MAX }
 }
 
 impl Channel for f32 {
@@ -71,6 +88,18 @@ impl Channel for f32 {
     #[inline] fn to_channel_f64(self) -> f64 { self as f64 }
 
     #[inline] fn invert_channel(self) -> f32 { 1.0 - self }
+    
+    #[inline]
+    fn normalized_mul(self, rhs: Self) -> Self {
+        self * rhs
+    }
+    
+    #[inline]
+    fn normalized_div(self, rhs: Self) -> Self {
+        self / rhs
+    }
+    
+    #[inline] fn max() -> f32{ 1.0 }
 }
 
 impl Channel for f64 {
@@ -81,26 +110,24 @@ impl Channel for f64 {
     #[inline] fn to_channel_f64(self) -> f64 { self }
 
     #[inline] fn invert_channel(self) -> f64 { 1.0 - self }
+    
+    #[inline]
+    fn normalized_mul(self, rhs: Self) -> Self {
+        self * rhs
+    }
+    
+    #[inline]
+    fn normalized_div(self, rhs: Self) -> Self {
+        self / rhs
+    }
+    
+    #[inline] fn max() -> f64{ 1.0 }
 }
 
 pub trait FloatChannel: Float + Channel {
     #[inline]
-    fn normalize_channel(self) -> Self {
-        self.clamp(cast(0.0f64), cast(1.0f64))
-    }
-
-    #[inline]
-    fn normalize_degrees(self) -> Self {
-        if (self) < cast(0.0f64) {
-            (self + cast(360.0f64)) % cast(360.0f64)
-        } else {
-            self % cast(360.0f64)
-        }
-    }
-
-    #[inline]
-    fn invert_degrees(self) -> Self {
-        (self + cast(180.0f64)).normalize_degrees()
+    fn saturate(self) -> Self {
+        self.clamp(zero(),one())
     }
 }
 
@@ -109,7 +136,7 @@ impl FloatChannel for f64 {}
 
 #[cfg(test)]
 mod tests {
-    use super::{Channel, FloatChannel};
+    use super::Channel;
 
     #[test]
     fn test_to_channel_u8() {
@@ -196,15 +223,6 @@ mod tests {
     }
 
     #[test]
-    fn test_invert_degrees_f32() {
-        assert_eq!(  0.00f32.invert_degrees(), 180.00f32);
-        assert_eq!( 45.00f32.invert_degrees(), 225.00f32);
-        assert_eq!( 90.00f32.invert_degrees(), 270.00f32);
-        assert_eq!(360.00f32.invert_degrees(), 180.00f32);
-        assert_eq!(720.00f32.invert_degrees(), 180.00f32);
-    }
-
-    #[test]
     fn test_to_channel_f64() {
         assert_eq!(0.00f64.to_channel_u8(), 0x00);
         assert_eq!(0.25f64.to_channel_u8(), 0x3F);
@@ -230,14 +248,5 @@ mod tests {
         assert_eq!(0.00f64.invert_channel(), 1.00f64);
         assert_eq!(0.50f64.invert_channel(), 0.50f64);
         assert_eq!(1.00f64.invert_channel(), 0.00f64);
-    }
-
-    #[test]
-    fn test_invert_degrees_f64() {
-        assert_eq!(  0.00f64.invert_degrees(), 180.00f64);
-        assert_eq!( 45.00f64.invert_degrees(), 225.00f64);
-        assert_eq!( 90.00f64.invert_degrees(), 270.00f64);
-        assert_eq!(360.00f64.invert_degrees(), 180.00f64);
-        assert_eq!(720.00f64.invert_degrees(), 180.00f64);
     }
 }
