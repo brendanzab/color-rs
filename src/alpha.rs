@@ -67,7 +67,7 @@ impl<T: Channel, C: Color<T>> Color<T> for AlphaColor<T, C> {
 #[macro_export]
 macro_rules! rgba{
     ( $r: expr, $g: expr, $b: expr, $a: expr ) => ({
-        use $crate::{Rgba,Rgb};
+        use $crate::{Rgba, Rgb};
         Rgba{ c: Rgb{ r: $r, g: $g, b: $b }, a: $a } 
     });
     ( $to_rgb: expr, $a: expr ) => ({

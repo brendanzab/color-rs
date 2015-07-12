@@ -22,6 +22,7 @@ pub use hsv::{Hsv, ToHsv};
 pub use rgb::{Rgb, Rg, ToRgb, consts};
 pub use srgb::Srgb;
 pub use ycbcr::YCbCr;
+pub use angle::Deg;
 
 #[macro_use] mod rgb;
 #[macro_use] mod alpha;
