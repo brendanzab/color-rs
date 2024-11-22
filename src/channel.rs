@@ -127,7 +127,7 @@ impl Channel for f64 {
 pub trait FloatChannel: Float + Channel {
     #[inline]
     fn saturate(self) -> Self {
-        self.clamp(zero(),one())
+        Channel::clamp(self, zero(), one())
     }
 }
 
