@@ -105,13 +105,13 @@ impl<T:Channel> Rgb<T> {
 #[macro_export]
 macro_rules! rgb{
     ( $r: expr, $g: expr, $b: expr ) => {
-        Rgb{ r: $r, g: $g, b: $b } 
+        $crate::Rgb{ r: $r, g: $g, b: $b } 
     };
     ( $rg: expr, $b: expr ) => {
-        Rgb{ r: $rg.r, g: $rg.g, b: $b } 
+        $crate::Rgb{ r: $rg.r, g: $rg.g, b: $b } 
     };
     ( $r: expr, $gb: expr ) => {
-        Rgb{ r: $r, g: $gb.r, b: $gb.g } 
+        $crate::Rgb{ r: $r, g: $gb.r, b: $gb.g } 
     };
 }
 
